@@ -1,4 +1,7 @@
 import 'package:covoiturage_app/screens/SignIn.dart';
+import 'package:covoiturage_app/screens/SignUp.dart';
+import 'package:covoiturage_app/screens/SplashScreen.dart';
+import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,20 +13,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Covoiturage',
-        debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.grey,
+        primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SignIn(),
+      home: SplashScreen(),
     );
   }
 }
