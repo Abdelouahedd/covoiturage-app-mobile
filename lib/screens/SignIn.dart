@@ -1,3 +1,4 @@
+import 'package:covoiturage_app/screens/ControllerScreens.dart';
 import 'package:covoiturage_app/screens/SignUp.dart';
 import 'package:covoiturage_app/widgets/Input.dart';
 import 'package:covoiturage_app/widgets/InputPassword.dart';
@@ -33,6 +34,7 @@ class _SignInState extends State<SignIn> {
   void signIn() {
     print(
         "Login ${emailController.text} and password ${passwordController.text}");
+    Navigator.push(context, SlideRightRoute(page: ControllerScreens()));
   }
 
   @override
