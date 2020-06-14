@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 
 class Input extends StatelessWidget {
-  Input(this.hint, this.iconType,this.margin, this.controller);
+  Input(this.hint, this.iconType, this.margin, this.controller,
+      {this.sizeWidth, this.tap, this.disable});
   final String hint;
   final TextEditingController controller;
   final IconData iconType;
   final double margin;
+  final Function tap;
+  bool disable;
+  double sizeWidth = 0;
   @override
   Widget build(BuildContext context) {
+    this.sizeWidth = this.sizeWidth == 0
+        ? MediaQuery.of(context).size.width / 1.2
+        : this.sizeWidth;
+    this.disable = this.disable == null ? false : this.disable;
     return Container(
-      width: MediaQuery.of(context).size.width / 1.2,
+      width: this.sizeWidth,
       height: 45,
       margin: EdgeInsets.only(top: margin),
       padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
@@ -18,6 +26,8 @@ class Input extends StatelessWidget {
           color: Colors.white,
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)]),
       child: TextField(
+        readOnly: this.disable,
+        onTap: this.tap,
         controller: controller,
         decoration: InputDecoration(
           border: InputBorder.none,

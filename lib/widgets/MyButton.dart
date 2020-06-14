@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+@immutable
 class MyButton extends StatelessWidget {
   MyButton(this.name, this.withSize, this.click);
   final String name;
