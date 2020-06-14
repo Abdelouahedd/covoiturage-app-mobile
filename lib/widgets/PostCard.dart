@@ -79,9 +79,8 @@ class BuildPost extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(bottom: 5),
                 child: InkWell(
-                  onTap: () {
-                    Navigator.push(context, SlideRightRoute(page: Messages()));
-                  },
+                  onTap: () => Navigator.push(
+                      context, SlideRightRoute(page: Messages())),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,

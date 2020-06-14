@@ -1,3 +1,4 @@
+import 'package:covoiturage_app/screens/Messages.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,10 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                         go: () => Navigator.push(
                             context, SlideRightRoute(page: ProfilePage()))),
                     _buildDivider(),
-                    _buildRow(Icons.message, "Messages", showBadge: true),
+                    _buildRow(Icons.message, "Messages",
+                        showBadge: true,
+                        go: () => Navigator.push(
+                            context, SlideRightRoute(page: Messages()))),
                     _buildDivider(),
                     _buildRow(Icons.notifications, "Notifications",
                         showBadge: true),
