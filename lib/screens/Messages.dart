@@ -150,10 +150,8 @@ class _MessagesState extends State<Messages> {
         ],
       ),
       width: MediaQuery.of(context).size.width, //double.infinity,
-      height: 60.0,
       decoration: new BoxDecoration(
-          border: new Border(
-              top: new BorderSide(color: new Color(0xffE8E8E8), width: 0.5)),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
           color: Colors.white),
     );
     String img = "assets/images/user.png";
@@ -282,10 +280,7 @@ class _MessagesState extends State<Messages> {
               ),
               Expanded(
                 flex: enableButton ? 2 : 1,
-                child: Container(
-                  color: Color.fromRGBO(240, 255, 255, 0.9),
-                  child: textInput,
-                ),
+                child: textInput,
               ),
             ],
           ),

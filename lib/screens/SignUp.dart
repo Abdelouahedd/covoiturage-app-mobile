@@ -1,11 +1,12 @@
 import 'dart:io';
+
 import 'package:covoiturage_app/widgets/Input.dart';
 import 'package:covoiturage_app/widgets/InputPassword.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:getflutter/getflutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class SignUp extends StatefulWidget {

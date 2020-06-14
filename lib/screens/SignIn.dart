@@ -32,8 +32,7 @@ class _SignInState extends State<SignIn> {
   }
 
   void signIn() {
-    print(
-        "Login ${emailController.text} and password ${passwordController.text}");
+    print("Login ${emailController.text} and password ${passwordController.text}");
     Navigator.push(context, SlideRightRoute(page: ControllerScreens()));
   }
 

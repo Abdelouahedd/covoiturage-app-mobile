@@ -1,12 +1,10 @@
 import 'package:covoiturage_app/screens/Friends.dart';
-import 'package:covoiturage_app/screens/Messages.dart';
-import 'package:covoiturage_app/screens/Profile.dart';
 import 'package:covoiturage_app/screens/Trajet.dart';
 import 'package:covoiturage_app/widgets/NavigationDrawer.dart';
 import 'package:covoiturage_app/widgets/TitledBottomNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:getflutter/getflutter.dart';
+
 import 'Home.dart';
 
 class ControllerScreens extends StatefulWidget {

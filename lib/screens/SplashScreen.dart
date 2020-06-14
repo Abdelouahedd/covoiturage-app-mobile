@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:covoiturage_app/screens/SignIn.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -42,7 +42,6 @@ class _SplashScreenState extends State<SplashScreen>
         sleep(Duration(seconds: 2));
         goToLoginPage();
       }
-
       start -= 1;
     });
   }
