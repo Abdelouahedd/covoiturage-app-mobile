@@ -145,12 +145,12 @@ class _TrajetState extends State<Trajet> {
                         child: Row(
                           children: [
                             new IconButton(
-                              icon: new Icon(Icons.image),
+                              icon: new Icon(Icons.add_photo_alternate),
                               onPressed: getImage,
                               color: new Color(0xff203152),
                             ),
                             new IconButton(
-                              icon: new Icon(Icons.camera_alt),
+                              icon: new Icon(Icons.add_a_photo),
                               onPressed: getImageFromCamera,
                               color: new Color(0xff203152),
                             ),

@@ -1,5 +1,6 @@
 import 'package:covoiturage_app/screens/Messages.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
+import 'package:covoiturage_app/screens/SignIn.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 
@@ -83,7 +84,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     _buildDivider(),
                     _buildRow(Icons.settings, "Settings"),
                     _buildDivider(),
-                    _buildRow(Icons.info_outline, "Help"),
+                    _buildRow(Icons.arrow_back, "Log out",
+                        go: () => Navigator.pushReplacement(
+                            context, SlideRightRoute(page: SignIn()))),
                     _buildDivider(),
                   ],
                 ),
