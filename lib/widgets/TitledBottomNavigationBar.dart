@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TitledBottomNavigationBar extends StatefulWidget {
   final List<Item> items;
-   int currentIndex;
+  final int currentIndex;
 
    TitledBottomNavigationBar({Key key, this.items,this.currentIndex}) : super(key: key);
 
@@ -17,7 +17,7 @@ class _TitledBottomNavigationBarState extends State<TitledBottomNavigationBar>
   int selectedIndex = 0;
   static const double BAR_HEIGHT = 60;
   static const double INDICATOR_HEIGHT = 2;
-  static const double INDICATOR_WIDTH = 10;
+  // static const double INDICATOR_WIDTH = 10;
   double width = 0;
   double indicatorAlignX = 0;
 

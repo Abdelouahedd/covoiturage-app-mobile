@@ -5,7 +5,6 @@ import 'package:covoiturage_app/widgets/InputPassword.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
-
 class SignIn extends StatefulWidget {
   @override
   _SignInState createState() => _SignInState();
@@ -98,7 +97,7 @@ class _SignInState extends State<SignIn> {
                   width: MediaQuery.of(context).size.width,
                   child: Column(
                     children: <Widget>[
-                      Input("Email", Icons.email, 0, emailController),
+                      Input("Email", Icons.email, 10, emailController),
                       InputPassword(passwordController, 32),
                       forgotPassword,
                       SizedBox(

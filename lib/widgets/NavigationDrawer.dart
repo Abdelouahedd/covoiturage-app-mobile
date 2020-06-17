@@ -91,6 +91,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                         go: () => Navigator.pushReplacement(
                             context, SlideRightRoute(page: SignIn()))),
                     _buildDivider(),
+                    
                   ],
                 ),
               )

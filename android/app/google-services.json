@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "836149614130",
+    "firebase_url": "https://covoiturage-e13ed.firebaseio.com",
+    "project_id": "covoiturage-e13ed",
+    "storage_bucket": "covoiturage-e13ed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836149614130:android:87959d40b190543667ce2b",
+        "android_client_info": {
+          "package_name": "com.ae.covoiturage_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836149614130-tmj4j6era95gt3h5c2ahkjdt9spackab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBktKtVGeLuAgWYubbsnY8FFgdme9N71Ug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "836149614130-tmj4j6era95gt3h5c2ahkjdt9spackab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

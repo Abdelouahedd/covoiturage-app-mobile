@@ -1,4 +1,3 @@
-import 'package:covoiturage_app/widgets/MyButton.dart';
 import 'package:covoiturage_app/widgets/StarDisplay.dart';
 import 'package:flutter/material.dart';
 

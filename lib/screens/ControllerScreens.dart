@@ -16,7 +16,6 @@ class _ControllerScreensState extends State<ControllerScreens> {
   List<Item> items;
   int _currentIndex = 0;
   List<Widget> _children;
-  static final String path = "lib/src/pages/navigation/drawer2.dart";
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final Color primary = Colors.white;
   final Color active = Colors.grey.shade800;

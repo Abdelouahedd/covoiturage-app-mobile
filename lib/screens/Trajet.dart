@@ -69,9 +69,6 @@ class _TrajetState extends State<Trajet> {
   }
 
   void submitPost() {
-    String from = _from.text;
-    String to = _to.text;
-    String time;
   }
 
   @override

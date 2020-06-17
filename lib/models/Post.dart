@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:covoiturage_app/services/Util.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'User.dart';
 
