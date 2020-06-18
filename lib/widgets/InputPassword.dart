@@ -22,6 +22,7 @@ class _InputPasswordState extends State<InputPassword> {
             color: Colors.white,
             boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)]),
         child: TextField(
+          controller: widget.editPasswordController,
           obscureText: widget.shwoPassword,
           keyboardType: TextInputType.visiblePassword,
           autocorrect: true,
