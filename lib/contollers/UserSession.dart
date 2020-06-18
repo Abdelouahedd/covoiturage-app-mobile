@@ -4,19 +4,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserSession {
   SharedPreferences _preferences;
+  
   UserSession() {
     SharedPreferences.getInstance().then((value) => this._preferences = value);
   }
 
   void saveSessionUser(User user) {
-    _preferences.setString("id", user.id);
-    _preferences.setString("email", user.email);
-    _preferences.setString("username", user.username);
-    _preferences.setString("city", user.city);
-    _preferences.setString("birthDay", Util.convertDateToString(user.birthDay));
-    _preferences.setString("password", user.password);
-    _preferences.setString("profileImg", user.profileImg);
-    _preferences.setDouble("rank", user.rank);
+    _preferences.setString("id", user.id ?? '0');
+    _preferences.setString("email", user.email ?? '');
+    _preferences.setString("username", user.username ?? '');
+    _preferences.setString("city", user.city ?? '');
+    _preferences.setString(
+        "birthDay", Util.convertDateToString(user.birthDay) ?? '');
+    _preferences.setString("password", user.password ?? '');
+    _preferences.setString("profileImg", user.profileImg ?? '');
+    _preferences.setDouble("rank", user.rank ?? 0);
   }
 
   Future<bool> destroySession(User user) async {
@@ -28,7 +30,7 @@ class UserSession {
   User getCurrentUser() {
     User currentUser = new User(
       id: _preferences.getString("id") ?? '0',
-      email: _preferences.getString("email") ,
+      email: _preferences.getString("email"),
       username: _preferences.getString("username"),
       city: _preferences.getString("city"),
       birthDay: Util.convertToDateTime(_preferences.getString("birthDay")),

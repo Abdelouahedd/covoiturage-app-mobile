@@ -19,11 +19,11 @@ class UserController {
           .timeout(new Duration(seconds: 60))
           .catchError(
             (onError) =>
-                print("Error while sign in to app :${onError.toString()}"),
+                print("Error while sign in to app :${onError.message}"),
           );
       return _user;
     } catch (e) {
-      print("Error while sign in to app :${e.toString()}");
+      print("Error while sign in to app :${e.message}");
       return null;
     }
   }
@@ -101,16 +101,12 @@ class UserController {
   }
 
   void getUser(String uid) {
-    Map<String, dynamic> userJson = new Map();
     Firestore.instance
         .collection("users")
         .document(uid)
         .get()
         .then((value) => {
-              // value.data.forEach((key, value) {
-              //   if (key.compareTo("Timestamp") == 0) userJson[key] = value;
-              // }),
-              print("returned User ${value.data}"),
+              print("returned value ${value.data}"),
               _user = User.fromJson(value.data),
               print("Returned user ${_user.toString()}")
             })

@@ -10,8 +10,6 @@ import 'package:covoiturage_app/widgets/MyButton.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:getflutter/components/alert/gf_alert.dart';
-import 'package:getflutter/getflutter.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -24,10 +22,11 @@ class _SignInState extends State<SignIn> {
   String image = "";
 
   bool isLoading = false;
-  UserSession userSession = new UserSession();
+  UserSession userSession;
   @override
   void initState() {
     super.initState();
+    userSession = new UserSession();
   }
 
   @override
@@ -44,13 +43,13 @@ class _SignInState extends State<SignIn> {
   void signIn() {
     String email = emailController.text.trim();
     String pass = Util.hashPass(passwordController.text);
-    User user = new User(email: email, password: pass);
-    UserController controller = new UserController(user: user);
+    print("$email -- $pass");
+    print("$email -- ${passwordController.text}");
+    UserController controller = new UserController();
     this.setState(() {
       isLoading = true;
     });
     controller.signIn(email, pass).then((value) => {
-          print("value $value"),
           if (value == null)
             {
               this.setState(() {
@@ -61,12 +60,12 @@ class _SignInState extends State<SignIn> {
             }
           else
             {
+              userSession.saveSessionUser(value),
               this.setState(() {
                 isLoading = false;
               }),
               Fluttertoast.showToast(
                   msg: "User authentified", backgroundColor: Colors.green),
-              // userSession.saveSessionUser(user),
               Navigator.push(
                   context, SlideRightRoute(page: ControllerScreens()))
             }

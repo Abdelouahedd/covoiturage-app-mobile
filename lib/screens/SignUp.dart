@@ -32,6 +32,8 @@ class _SignUpState extends State<SignUp> {
   TextEditingController passwordController;
   TextEditingController cityController;
   TextEditingController birthDayController;
+  String email, username, password, city, birthday;
+
   File _image;
   bool disable = false;
   bool isLoading = false;
@@ -48,6 +50,7 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         selectedDate = picked;
         birthDayController.text = DateFormat('yyyy-MM-dd').format(picked);
+        birthday = DateFormat('yyyy-MM-dd').format(picked);
       });
   }
 
@@ -104,9 +107,9 @@ class _SignUpState extends State<SignUp> {
                   msg: "Problem while creating user",
                   backgroundColor: Colors.red),
         });
-       this.setState(() {
-            isLoading = false;
-          });
+    this.setState(() {
+      isLoading = false;
+    });
     print(
         "---------------------------------------------------------------- \n");
     Navigator.pushReplacement(context, ScaleRoute(page: SignIn()));
@@ -209,61 +212,62 @@ class _SignUpState extends State<SignUp> {
                         width: MediaQuery.of(context).size.width,
                         child: Column(
                           children: <Widget>[
-                            // new CustomTextField(
-                            //   icon: Icon(Icons.perm_identity),
-                            //   hint: "UserName",
-                            //   validator: (v) {
-                            //     Pattern pattern = r'^(([^<>()[\]\\.,;:\s@\"]+'
-                            //         r'(\.[^<>()[\]\\.,;:\s@\"]+)*)|'
-                            //         r'(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.'
-                            //         r'[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)'
-                            //         r'+[a-zA-Z]{2,}))$';
-                            //     RegExp regex = new RegExp(pattern);
-                            //     if (v.length == 0) return "* require";
-                            //     if (!regex.hasMatch(v)) return 'Enter Valid Email';
-                            //   },
-                            //   onSaved: (newValue) => print(newValue),
-                            // ),
-                            Input("UserName", Icons.perm_identity, 0,
-                                userController),
-                            Input("Email", Icons.email, 10, emailController),
-                            InputPassword(passwordController, 10),
-                            Input("City", Icons.place, 10, cityController),
-                            InkWell(
-                              onTap: () => {this._selectDate(context)},
-                              child: IgnorePointer(
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.2,
-                                  height: 45,
-                                  margin: EdgeInsets.only(top: 10),
-                                  padding: EdgeInsets.only(
-                                      top: 4, left: 16, right: 16, bottom: 4),
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(50)),
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.black12,
-                                            blurRadius: 5)
-                                      ]),
-                                  child: TextField(
-                                    readOnly: true,
-                                    controller: birthDayController,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      icon: Icon(
-                                        Icons.calendar_today,
-                                        color: Colors.blue[600],
-                                      ),
-                                      hintText: "Birth day",
-                                      hintStyle: TextStyle(color: Colors.blue),
-                                    ),
-                                    style: TextStyle(color: Colors.blue[700]),
-                                  ),
-                                ),
-                              ),
+                            new CustomTextField(
+                              icon: Icon(Icons.email),
+                              hint: "Email",
+                              validator: (v) {
+                                Pattern pattern = r'^(([^<>()[\]\\.,;:\s@\"]+'
+                                    r'(\.[^<>()[\]\\.,;:\s@\"]+)*)|'
+                                    r'(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.'
+                                    r'[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)'
+                                    r'+[a-zA-Z]{2,}))$';
+                                RegExp regex = new RegExp(pattern);
+                                if (v.length == 0) return "* require";
+                                if (!regex.hasMatch(v))
+                                  return 'Enter Valid Email';
+                              },
+                              onSaved: (newValue) => email = newValue,
+                            ),
+                            new CustomTextField(
+                              icon: Icon(Icons.perm_identity),
+                              hint: "Username",
+                              validator: (v) {
+                                Pattern pattern = r'(^[A-Za-z0-9]+$)';
+                                RegExp regex = new RegExp(pattern);
+                                if (v.length == 0) return "* require";
+                                if (!regex.hasMatch(v))
+                                  return 'Enter Valid username (just characteres and numbers)';
+                              },
+                              onSaved: (newValue) => username = newValue,
+                            ),
+                            new CustomTextField(
+                              icon: Icon(Icons.vpn_key),
+                              hint: "Password",
+                              obsecure: true,
+                              validator: (v) {
+                                if (v.length == 0) return "* require";
+                                if (v.length < 6)
+                                  return 'Password can\'t be less then 6 characteres  ';
+                              },
+                              onSaved: (newValue) => password = newValue,
+                            ),
+                            new CustomTextField(
+                              icon: Icon(Icons.place),
+                              hint: "City",
+                              validator: (v) {
+                                if (v.length == 0) return "* require";
+                              },
+                              onSaved: (newValue) => city = newValue,
+                            ),
+                            new CustomTextField(
+                              textEditingController: birthDayController,
+                              read: true,
+                              icon: Icon(Icons.calendar_today),
+                              hint: "Birth day",
+                              tap: () => _selectDate(context),
+                              validator: (b) {
+                                if (b.length == 0) return "* require";
+                              },
                             ),
                             SizedBox(
                               height: 15,
