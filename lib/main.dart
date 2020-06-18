@@ -1,7 +1,5 @@
-import 'package:covoiturage_app/screens/SignIn.dart';
-import 'package:covoiturage_app/screens/SignUp.dart';
+
 import 'package:covoiturage_app/screens/SplashScreen.dart';
-import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 
 void main() {

@@ -1,3 +1,5 @@
+import 'package:covoiturage_app/contollers/UserSession.dart';
+import 'package:covoiturage_app/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -8,10 +10,12 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final image = 'assets/images/user.png';
-
+  User user;
+  UserSession userSession = new UserSession();
   @override
   void initState() {
     super.initState();
+    user = userSession.getCurrentUser();
   }
 
   @override
@@ -83,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      "Little Butterfly",
+                                      user.username,
                                       style:
                                           Theme.of(context).textTheme.headline6,
                                     ),
@@ -155,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Divider(),
                           ListTile(
                             title: Text("Email"),
-                            subtitle: Text("butterfly.little@gmail.com"),
+                            subtitle: Text(user.email),
                             leading: Icon(Icons.email),
                           ),
                           ListTile(

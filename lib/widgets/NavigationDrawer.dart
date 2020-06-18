@@ -1,3 +1,4 @@
+import 'package:covoiturage_app/contollers/UserController.dart';
 import 'package:covoiturage_app/screens/Messages.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
 import 'package:covoiturage_app/screens/SignIn.dart';
@@ -12,6 +13,24 @@ class NavigationDrawer extends StatefulWidget {
 
 class _NavigationDrawerState extends State<NavigationDrawer> {
   final String image = "assets/images/user.png";
+  UserController userController = new UserController();
+
+  void signOut() {
+    userController.signOut().then((value) => {
+          value == true
+              ? Navigator.pushReplacement(
+                  context, SlideRightRoute(page: SignIn()))
+              : showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Container(
+                        child: Text("errorMsg"),
+                      ),
+                    );
+                  }),
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,11 +106,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     _buildDivider(),
                     _buildRow(Icons.settings, "Settings"),
                     _buildDivider(),
-                    _buildRow(Icons.arrow_back, "Log out",
-                        go: () => Navigator.pushReplacement(
-                            context, SlideRightRoute(page: SignIn()))),
+                    _buildRow(Icons.arrow_back, "Log out", go: () => signOut()),
                     _buildDivider(),
-                    
                   ],
                 ),
               )

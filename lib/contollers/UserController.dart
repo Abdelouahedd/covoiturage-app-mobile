@@ -1,24 +1,31 @@
 import 'dart:io';
 
 import 'package:covoiturage_app/models/User.dart';
+import 'package:covoiturage_app/services/Util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class UserController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final User _user;
-  UserController(this._user);
-  Future signIn() async {
+  User _user;
+  UserController({User user}) : _user = user;
+
+  Future signIn(String email, String password) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(
-          email: _user.email, password: _user.password);
-      FirebaseUser baseUser = result.user;
-      return baseUser;
+      await _auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((value) => this.getUser(value.user.uid))
+          .timeout(new Duration(seconds: 60))
+          .catchError(
+            (onError) =>
+                print("Error while sign in to app :${onError.toString()}"),
+          );
+      return _user;
     } catch (e) {
       print("Error while sign in to app :${e.toString()}");
+      return null;
     }
-    return null;
   }
 
   Future<dynamic> signUp(File avatarImageFile) async {
@@ -42,11 +49,15 @@ class UserController {
                 .document(_user.id)
                 .setData(_user.toJson())
                 .then((value) => returnVal = true)
-                .catchError((onError) =>
-                    print("Error while add new user to document : $onError")),
+                .catchError((onError) => {
+                      print(
+                          "Error while add new user to document : ${onError.code}"),
+                      returnVal = false,
+                    }),
           });
+      returnVal = true;
     } catch (e) {
-      print("Error while sign up to app :${e.toString()}");
+      print("Error while sign up to app :${e.message}");
       returnVal = false;
     }
     return returnVal;
@@ -79,13 +90,44 @@ class UserController {
   }
 
   Future<bool> signOut() async {
-    _auth.signOut().then((value) {
+    try {
+      await _auth.signOut();
+      print("Success log out");
       return true;
-    }).catchError(
-      (onError) => {
-        print("Error while add new user to document : ${onError.toString()}"),
-      },
+    } catch (err) {
+      print("Error while user sign out  : ${err.message}");
+      return false;
+    }
+  }
+
+  void getUser(String uid) {
+    Map<String, dynamic> userJson = new Map();
+    Firestore.instance
+        .collection("users")
+        .document(uid)
+        .get()
+        .then((value) => {
+              // value.data.forEach((key, value) {
+              //   if (key.compareTo("Timestamp") == 0) userJson[key] = value;
+              // }),
+              print("returned User ${value.data}"),
+              _user = User.fromJson(value.data),
+              print("Returned user ${_user.toString()}")
+            })
+        .catchError((onError) =>
+            print("Error while getting information of user  : $onError"));
+  }
+
+  User buildUser(Map<String, dynamic> json) {
+    return User(
+      id: json["id"],
+      username: json["username"],
+      email: json["email"],
+      password: json["password"],
+      city: json["city"],
+      birthDay: Util.convertToDateTime(json["birthDay"]),
+      profileImg: json["profileImg"] == null ? null : json["profileImg"],
+      rank: json["rank"],
     );
-    return false;
   }
 }

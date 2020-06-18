@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:covoiturage_app/contollers/UserController.dart';
+import 'package:covoiturage_app/contollers/UserSession.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/services/Util.dart';
 import 'package:covoiturage_app/widgets/CustomTextField.dart';
 import 'package:covoiturage_app/widgets/Input.dart';
 import 'package:covoiturage_app/widgets/InputPassword.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
+import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:getflutter/getflutter.dart';
@@ -14,6 +16,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
+import 'SignIn.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -50,7 +54,7 @@ class _SignUpState extends State<SignUp> {
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
-      _image = image;
+      this._image = image;
     });
   }
 
@@ -77,33 +81,35 @@ class _SignUpState extends State<SignUp> {
   void submit() {
     String email = emailController.text.trim();
     User user = new User(
-      email: email.trim(),
+      email: email,
       city: cityController.text,
       birthDay: Util.convertToDateTime(birthDayController.text),
       username: userController.text,
-      password: Util.hashPass(passwordController.text),
+      password: passwordController.text,
     );
     print(
         "---------------------------------------------------------------- \n");
+    print("password  : ${passwordController.text}");
     print("user from FORM  : $user");
-      UserController controller = new UserController(user);
-    File img = _image;
+    UserController controller = new UserController(user: user);
+    File img = this._image;
     this.setState(() {
       isLoading = true;
     });
     controller.signUp(img).then((value) => {
-          this.setState(() {
-            isLoading = false;
-          }),
           value == true
               ? Fluttertoast.showToast(
                   msg: "User created sucess", backgroundColor: Colors.green)
               : Fluttertoast.showToast(
-                  msg: "Problem wwhile creating user",
+                  msg: "Problem while creating user",
                   backgroundColor: Colors.red),
         });
+       this.setState(() {
+            isLoading = false;
+          });
     print(
         "---------------------------------------------------------------- \n");
+    Navigator.pushReplacement(context, ScaleRoute(page: SignIn()));
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:covoiturage_app/services/Util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
   String _id;
@@ -12,17 +13,17 @@ class User {
   String _password;
   double rank;
 
-  User(
-      {String id,
-      this.username,
-      this.email,
-      String password,
-      this.city,
-      this.birthDay,
-      this.profileImg,
-      this.rank = 0})
-      : _id = id,
-        _password = password;
+  User({
+    String id,
+    this.username,
+    this.email,
+    String password,
+    this.city,
+    this.birthDay,
+    this.profileImg,
+    this.rank = 0,
+  })  : _id = id,
+        _password = Util.hashPass(password);
 
   String get id => _id;
 
@@ -40,7 +41,7 @@ class User {
         email: json["email"],
         password: json["password"],
         city: json["city"],
-        birthDay: Util.convertToDateTime(json["birthDay"]),
+        birthDay: (json["birthDay"] as Timestamp).toDate(),
         profileImg: json["profileImg"] == null ? null : json["profileImg"],
         rank: json["rank"],
       );
@@ -57,6 +58,6 @@ class User {
 
   @override
   String toString() {
-    return 'User : $username - $email ';
+    return 'User : { $username - $email - $password }';
   }
 }
