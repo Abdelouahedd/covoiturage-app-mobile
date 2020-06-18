@@ -100,15 +100,14 @@ class UserController {
     }
   }
 
-  void getUser(String uid) {
-    Firestore.instance
+  Future getUser(String uid) async {
+    await Firestore.instance
         .collection("users")
         .document(uid)
         .get()
         .then((value) => {
-              print("returned value ${value.data}"),
               _user = User.fromJson(value.data),
-              print("Returned user ${_user.toString()}")
+              print("Returned user from getUser ${_user.toString()}")
             })
         .catchError((onError) =>
             print("Error while getting information of user  : $onError"));

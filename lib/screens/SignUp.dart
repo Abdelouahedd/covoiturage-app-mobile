@@ -1,21 +1,18 @@
 import 'dart:io';
 
 import 'package:covoiturage_app/contollers/UserController.dart';
-import 'package:covoiturage_app/contollers/UserSession.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/services/Util.dart';
 import 'package:covoiturage_app/widgets/CustomTextField.dart';
-import 'package:covoiturage_app/widgets/Input.dart';
-import 'package:covoiturage_app/widgets/InputPassword.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
+import 'package:covoiturage_app/widgets/ShowSnackBar.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:getflutter/getflutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter/services.dart' show rootBundle;
+
 
 import 'SignIn.dart';
 
@@ -27,10 +24,6 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
-  TextEditingController emailController;
-  TextEditingController userController;
-  TextEditingController passwordController;
-  TextEditingController cityController;
   TextEditingController birthDayController;
   String email, username, password, city, birthday;
 
@@ -64,55 +57,88 @@ class _SignUpState extends State<SignUp> {
   @override
   void initState() {
     super.initState();
-    emailController = new TextEditingController();
-    userController = new TextEditingController();
-    passwordController = new TextEditingController();
-    cityController = new TextEditingController();
     birthDayController = new TextEditingController();
   }
 
   @override
   void dispose() {
     super.dispose();
-    emailController.dispose();
-    userController.dispose();
-    passwordController.dispose();
-    cityController.dispose();
     birthDayController.dispose();
   }
 
+  bool validateForm() {
+    if (!_formKey.currentState.validate()) {
+      this.setState(() {
+        _autoValidate = true;
+      });
+      return false;
+    }
+    return true;
+  }
+
   void submit() {
-    String email = emailController.text.trim();
-    User user = new User(
-      email: email,
-      city: cityController.text,
-      birthDay: Util.convertToDateTime(birthDayController.text),
-      username: userController.text,
-      password: passwordController.text,
-    );
-    print(
-        "---------------------------------------------------------------- \n");
-    print("password  : ${passwordController.text}");
-    print("user from FORM  : $user");
-    UserController controller = new UserController(user: user);
-    File img = this._image;
-    this.setState(() {
-      isLoading = true;
-    });
-    controller.signUp(img).then((value) => {
-          value == true
-              ? Fluttertoast.showToast(
-                  msg: "User created sucess", backgroundColor: Colors.green)
-              : Fluttertoast.showToast(
-                  msg: "Problem while creating user",
-                  backgroundColor: Colors.red),
-        });
-    this.setState(() {
-      isLoading = false;
-    });
-    print(
-        "---------------------------------------------------------------- \n");
-    Navigator.pushReplacement(context, ScaleRoute(page: SignIn()));
+    if (validateForm()) {
+      User user = new User(
+        email: this.email.trim(),
+        city: this.city,
+        birthDay: Util.convertToDateTime(birthDayController.text),
+        username: this.username,
+        password: this.password,
+      );
+      print(
+          "---------------------------------------------------------------- \n");
+      print("password  : ${this.password}");
+      print("user from FORM  : $user");
+      print(
+          "---------------------------------------------------------------- \n");
+      UserController controller = new UserController(user: user);
+      this.setState(() {
+        isLoading = true;
+      });
+      controller.signUp(this._image).then((value) => {
+            value == true
+                ? {
+                    this.setState(() {
+                      isLoading = false;
+                    }),
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: new ShowSnackBar(
+                          color: Colors.green,
+                          msg: "User sign up sucessefully",
+                        ),
+                      ),
+                    )
+                  }
+                : {
+                    this.setState(() {
+                      isLoading = false;
+                    }),
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: new ShowSnackBar(
+                          color: Colors.red,
+                          msg: "Probleme while sign up",
+                        ),
+                      ),
+                    )
+                  },
+          });
+      // this.setState(() {
+      //   isLoading = false;
+      // });
+      sleep(new Duration(milliseconds: 5));
+      Navigator.pushReplacement(context, ScaleRoute(page: SignIn()));
+    } else {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: new ShowSnackBar(
+            color: Colors.red,
+            msg: "The from is not completed",
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -272,24 +298,7 @@ class _SignUpState extends State<SignUp> {
                             SizedBox(
                               height: 15,
                             ),
-                            MyButton(
-                                "Sign up",
-                                2,
-                                () => {
-                                      if (_formKey.currentState.validate())
-                                        {
-                                          submit(),
-                                        }
-                                      else
-                                        {
-                                          this.setState(() {
-                                            _autoValidate = true;
-                                          }),
-                                          Fluttertoast.showToast(
-                                              msg: "Form not completed",
-                                              backgroundColor: Colors.red)
-                                        }
-                                    }),
+                            MyButton("Sign up", 2, () => submit()),
                           ],
                         ),
                       )

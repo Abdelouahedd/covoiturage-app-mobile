@@ -58,6 +58,14 @@ class User {
 
   @override
   String toString() {
-    return 'User : { $username - $email - $password }';
+    return """
+    User : { \n
+      username :  $username - \n
+      email : $email - \n
+      password : $password  -\n 
+      city : $city -\n
+      profileImg : $profileImg -\n
+      rank : $rank\n
+      }\n""";
   }
 }

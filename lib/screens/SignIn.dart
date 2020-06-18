@@ -1,15 +1,15 @@
+import 'dart:io';
+
 import 'package:covoiturage_app/contollers/UserController.dart';
 import 'package:covoiturage_app/contollers/UserSession.dart';
-import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/screens/ControllerScreens.dart';
 import 'package:covoiturage_app/screens/SignUp.dart';
 import 'package:covoiturage_app/services/Util.dart';
-import 'package:covoiturage_app/widgets/Input.dart';
-import 'package:covoiturage_app/widgets/InputPassword.dart';
+import 'package:covoiturage_app/widgets/CustomTextField.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
+import 'package:covoiturage_app/widgets/ShowSnackBar.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -17,23 +17,30 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  TextEditingController emailController = new TextEditingController();
-  TextEditingController passwordController = new TextEditingController();
-  String image = "";
-
+  String _email, _password;
   bool isLoading = false;
   UserSession userSession;
+  UserController controller;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  bool _autoValidate = false;
+
   @override
   void initState() {
     super.initState();
     userSession = new UserSession();
+    controller = new UserController();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+  bool validateForm() {
+    if (!_formKey.currentState.validate()) {
+      this.setState(() {
+        _autoValidate = true;
+      });
+      return false;
+    }
+    return true;
   }
 
   void signUp() {
@@ -41,40 +48,60 @@ class _SignInState extends State<SignIn> {
   }
 
   void signIn() {
-    String email = emailController.text.trim();
-    String pass = Util.hashPass(passwordController.text);
-    print("$email -- $pass");
-    print("$email -- ${passwordController.text}");
-    UserController controller = new UserController();
-    this.setState(() {
-      isLoading = true;
-    });
-    controller.signIn(email, pass).then((value) => {
-          if (value == null)
-            {
-              this.setState(() {
-                isLoading = false;
-              }),
-              Fluttertoast.showToast(
-                  msg: "User not found", backgroundColor: Colors.red),
-            }
-          else
-            {
-              userSession.saveSessionUser(value),
-              this.setState(() {
-                isLoading = false;
-              }),
-              Fluttertoast.showToast(
-                  msg: "User authentified", backgroundColor: Colors.green),
-              Navigator.push(
-                  context, SlideRightRoute(page: ControllerScreens()))
-            }
-        });
+    final FormState form = _formKey.currentState;
+
+    if (validateForm()) {
+      form.save();
+      print("$_email -- ${Util.hashPass(this._password)} \n");
+      print("$_email -- $_password");
+      String hashPassword = Util.hashPass(this._password);
+      this.setState(() {
+        isLoading = true;
+      });
+      controller.signIn(_email, hashPassword).then((value) => {
+            print("Value retun from signIn methode : $value"),
+            if (value == null)
+              {
+                this.setState(() {
+                  isLoading = false;
+                }),
+                _scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: new ShowSnackBar(
+                      color: Colors.red,
+                      msg: "email or password are wrong",
+                    ),
+                  ),
+                ),
+              }
+            else
+              {
+                userSession.saveSessionUser(value),
+                print("User saved in sharedRefrences"),
+                this.setState(() {
+                  isLoading = false;
+                }),
+               _scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: new ShowSnackBar(
+                      color: Colors.green,
+                      msg: "User authentified",
+                    ),
+                  ),
+                ),
+                print("User authentified"),
+                sleep(new Duration(milliseconds: 5)),
+                Navigator.push(
+                    context, SlideRightRoute(page: ControllerScreens()))
+              }
+          });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -131,30 +158,64 @@ class _SignInState extends State<SignIn> {
                     ],
                   ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        children: <Widget>[
-                          Input("Email", Icons.email, 10, emailController),
-                          InputPassword(passwordController, 32),
-                          forgotPassword,
-                          SizedBox(
-                            height: 25,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              MyButton("sign in", 3, this.signIn),
-                              MyButton("Sign up", 3, this.signUp),
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+                Form(
+                  key: _formKey,
+                  autovalidate: _autoValidate,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: <Widget>[
+                            new CustomTextField(
+                              icon: Icon(Icons.email),
+                              hint: "Email",
+                              validator: (v) {
+                                Pattern pattern = r'^(([^<>()[\]\\.,;:\s@\"]+'
+                                    r'(\.[^<>()[\]\\.,;:\s@\"]+)*)|'
+                                    r'(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.'
+                                    r'[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)'
+                                    r'+[a-zA-Z]{2,}))$';
+                                RegExp regex = new RegExp(pattern);
+                                if (v.length == 0) return "* require";
+                                if (!regex.hasMatch(v))
+                                  return 'Enter Valid Email';
+                              },
+                              onSaved: (newValue) => {
+                                _email = newValue,
+                                print("New value in email field $newValue"),
+                              },
+                            ),
+                            // Input("Email", Icons.email, 10, emailController),
+                            // InputPassword(passwordController, 32),
+                            new CustomTextField(
+                              icon: Icon(Icons.vpn_key),
+                              hint: "Password",
+                              obsecure: true,
+                              validator: (v) {
+                                if (v.length == 0) return "* require";
+                                if (v.length < 2)
+                                  return 'Password can\'t be less then 6 characteres  ';
+                              },
+                              onSaved: (newValue) => _password = newValue,
+                            ),
+                            forgotPassword,
+                            SizedBox(
+                              height: 25,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                MyButton("sign in", 3, this.signIn),
+                                MyButton("Sign up", 3, this.signUp),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -177,9 +238,6 @@ class _SignInState extends State<SignIn> {
   }
 }
 
-// Scaffold.of(context).showSnackBar(SnackBar(
-//       content: Text("Sending Message"),
-//     ));
 Widget forgotPassword = Align(
   alignment: Alignment.centerRight,
   child: new InkWell(
