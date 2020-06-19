@@ -83,7 +83,7 @@ class _SignUpState extends State<SignUp> {
         city: this.city,
         birthDay: Util.convertToDateTime(birthDayController.text),
         username: this.username,
-        password: this.password,
+        password: Util.hashPass(this.password),
       );
       print(
           "---------------------------------------------------------------- \n");

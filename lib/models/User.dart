@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:covoiturage_app/services/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+class User extends Object {
   String _id;
   String username;
   String email;
@@ -23,7 +22,7 @@ class User {
     this.profileImg,
     this.rank = 0,
   })  : _id = id,
-        _password = Util.hashPass(password);
+        _password = password;
 
   String get id => _id;
 
@@ -67,5 +66,9 @@ class User {
       profileImg : $profileImg -\n
       rank : $rank\n
       }\n""";
+  }
+
+  bool operator == (o) {
+    return o is User && email == o.email && password == o.password;
   }
 }

@@ -67,6 +67,7 @@ class _SignInState extends State<SignIn> {
                 }),
                 _scaffoldKey.currentState.showSnackBar(
                   SnackBar(
+                    backgroundColor: Colors.white,
                     content: new ShowSnackBar(
                       color: Colors.red,
                       msg: "email or password are wrong",
@@ -76,23 +77,16 @@ class _SignInState extends State<SignIn> {
               }
             else
               {
-                userSession.saveSessionUser(value),
-                print("User saved in sharedRefrences"),
-                this.setState(() {
-                  isLoading = false;
-                }),
-               _scaffoldKey.currentState.showSnackBar(
-                  SnackBar(
-                    content: new ShowSnackBar(
-                      color: Colors.green,
-                      msg: "User authentified",
-                    ),
-                  ),
-                ),
-                print("User authentified"),
-                sleep(new Duration(milliseconds: 5)),
-                Navigator.push(
-                    context, SlideRightRoute(page: ControllerScreens()))
+                userSession.saveSessionUser(value).then((value) => {
+                      print("User saved in sharedRefrences"),
+                      this.setState(() {
+                        isLoading = false;
+                      }),
+                      print("User authentified"),
+                      sleep(new Duration(milliseconds: 5)),
+                      Navigator.push(
+                          context, SlideRightRoute(page: ControllerScreens()))
+                    }),
               }
           });
     }

@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:covoiturage_app/contollers/UserSession.dart';
 import 'package:covoiturage_app/models/User.dart';
-import 'package:covoiturage_app/services/Util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -107,22 +107,18 @@ class UserController {
         .get()
         .then((value) => {
               _user = User.fromJson(value.data),
-              print("Returned user from getUser ${_user.toString()}")
             })
         .catchError((onError) =>
             print("Error while getting information of user  : $onError"));
   }
 
-  User buildUser(Map<String, dynamic> json) {
-    return User(
-      id: json["id"],
-      username: json["username"],
-      email: json["email"],
-      password: json["password"],
-      city: json["city"],
-      birthDay: Util.convertToDateTime(json["birthDay"]),
-      profileImg: json["profileImg"] == null ? null : json["profileImg"],
-      rank: json["rank"],
-    );
+  Future<bool> isLogin() async {
+    UserSession session = new UserSession();
+    bool returnVal = false;
+    await session.checkEmailAndPass().then((user) => this.getUser(user.id));
+    _user.id != null ? returnVal = true : returnVal = false;
+    return returnVal;
   }
 }
+
+

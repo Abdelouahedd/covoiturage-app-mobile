@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:covoiturage_app/contollers/UserController.dart';
+import 'package:covoiturage_app/screens/ControllerScreens.dart';
 import 'package:covoiturage_app/screens/SignIn.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +17,23 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   BoxFit logo = BoxFit.contain;
   Timer _timer;
+  bool login = false;
+  UserController userController = new UserController();
   var si = 0.0;
 
   @override
   void initState() {
     super.initState();
+    checkLogin();
     startAnimation();
+  }
+
+  void checkLogin() async {
+    await userController.isLogin().then((value) => this.setState(() => {
+          login = value,
+          print("value $value"),
+          print("isLogin $login"),
+        }));
   }
 
   @override
@@ -32,15 +45,15 @@ class _SplashScreenState extends State<SplashScreen>
   startAnimation() async {
     const oneSec = const Duration(seconds: 1);
     var start = 8;
-    _timer = new Timer.periodic(oneSec, (Timer timer) {
+    _timer = new Timer.periodic(oneSec, (Timer timer)  {
       if (mounted) {
         this.setState(() {
           si += 0.1;
         });
       }
       if (start == 0) {
-        sleep(Duration(seconds: 2));
-        goToLoginPage();
+        sleep(Duration(seconds: 3));
+         login == true ? goToHomePage() : goToLoginPage();
       }
       start -= 1;
     });
@@ -48,6 +61,11 @@ class _SplashScreenState extends State<SplashScreen>
 
   void goToLoginPage() {
     Navigator.pushReplacement(context, SlideRightRoute(page: SignIn()));
+  }
+
+  void goToHomePage() {
+    Navigator.pushReplacement(
+        context, SlideRightRoute(page: ControllerScreens()));
   }
 
   @override
