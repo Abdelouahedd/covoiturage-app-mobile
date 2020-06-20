@@ -1,4 +1,6 @@
 import 'package:covoiturage_app/contollers/UserController.dart';
+import 'package:covoiturage_app/contollers/UserSession.dart';
+import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/screens/Messages.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
 import 'package:covoiturage_app/screens/SignIn.dart';
@@ -7,16 +9,30 @@ import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 
 class NavigationDrawer extends StatefulWidget {
+  final User user;
+  NavigationDrawer({this.user});
   @override
   _NavigationDrawerState createState() => _NavigationDrawerState();
 }
 
 class _NavigationDrawerState extends State<NavigationDrawer> {
-  final String image = "assets/images/user.png";
+  String image;
   UserController userController = new UserController();
+  UserSession userSession = new UserSession();
 
-  void signOut() {
-    userController.signOut().then((value) => {
+  @override
+  void initState() {
+    super.initState();
+    image = widget.user.profileImg == null
+        ? 'assets/images/user.png'
+        : widget.user.profileImg;
+  }
+
+  void signOut() async {
+    await userSession.destroySession().then((value) => value == true
+        ? print("clear from shared")
+        : print("Error while clear from shared"));
+    await userController.signOut().then((value) => {
           value == true
               ? Navigator.pushReplacement(
                   context, SlideRightRoute(page: SignIn()))
@@ -68,19 +84,21 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 40,
-                  backgroundImage: AssetImage(image),
+                  backgroundImage: widget.user == null
+                      ? AssetImage(image)
+                      : NetworkImage(widget.user.profileImg),
                 ),
               ),
               SizedBox(height: 5.0),
               Text(
-                "erika costell",
+                widget.user.username??' ',
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600),
               ),
               Text(
-                "@erika07",
+                widget.user.email??' ',
                 style: TextStyle(color: Colors.grey.shade800, fontSize: 16.0),
               ),
               SizedBox(height: 30.0),

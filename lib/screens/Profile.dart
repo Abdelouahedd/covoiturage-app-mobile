@@ -11,7 +11,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final image = 'assets/images/user.png';
+  String image;
   User user;
   UserSession userSession;
   bool isLoading = true;
@@ -22,6 +22,9 @@ class _ProfilePageState extends State<ProfilePage> {
     userSession.getCurrentUser().then((value) => {
           user = value,
           this.setState(() => isLoading = false),
+          image = user.profileImg == null
+              ? 'assets/images/user.png'
+              : user.profileImg,
         });
   }
 
@@ -51,8 +54,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ? Container(
               child: Center(
                 child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).primaryColor)),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).primaryColor),
+                ),
               ),
               color: Colors.white.withOpacity(0.8),
             )
@@ -159,7 +163,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   image: DecorationImage(
-                                    image: AssetImage(image),
+                                    image: user == null
+                                        ? AssetImage(image)
+                                        : NetworkImage(user.profileImg),
+                                    // image: NetworkImage(url)
                                     fit: BoxFit.cover,
                                   ),
                                 ),
