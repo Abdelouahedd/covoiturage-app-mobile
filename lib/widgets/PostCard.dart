@@ -1,34 +1,42 @@
+import 'package:covoiturage_app/models/Post.dart';
 import 'package:covoiturage_app/screens/Messages.dart';
+import 'package:covoiturage_app/services/Util.dart';
 import 'package:flutter/material.dart';
+import 'package:timeline_tile/timeline_tile.dart';
 
 import 'animatedRoute.dart';
 
 class BuildPost extends StatelessWidget {
-  String img;
+  final Post post;
 
-  BuildPost([this.img]);
-
+  BuildPost(this.post);
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      color: Colors.white,
-      elevation: 10.0,
-      margin: new EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-      child: ClipRRect(
-        child: Container(
-          height: this.img != null ? 350 : 200,
-          child: Column(
-            children: [
-              Banner(
-                location: BannerLocation.topEnd,
-                color: Colors.green,
-                message: "New ",
-                child: ListTile(
+    return GestureDetector(
+      onTap: null,
+      child: Card(
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: AnimatedContainer(
+          margin: EdgeInsets.only(bottom: 24),
+          duration: Duration(seconds: 2),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            alignment: Alignment.bottomCenter,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(6),
+                  bottomLeft: Radius.circular(6)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
                   title: Text(
-                    "Abdelouahed",
+                    this.post.user.username,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -42,68 +50,172 @@ class BuildPost extends StatelessWidget {
                   leading: CircleAvatar(
                     backgroundColor: Colors.white,
                     radius: 20,
-                    backgroundImage: AssetImage(img),
+                    backgroundImage: this.post.user.profileImg == null
+                        ? AssetImage('assets/images/user.png')
+                        : NetworkImage(this.post.user.profileImg),
                   ),
                 ),
-              ),
-              this.img != null
-                  ? Expanded(
-                      child: Container(
-                        margin: EdgeInsets.all(5),
-                        decoration: new BoxDecoration(
-                          image: new DecorationImage(
-                            image: Image.asset("assets/images/road_cover.png")
-                                .image,
-                            fit: BoxFit.fill,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                this.post.imgDesc != ' '
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.network(
+                          post.imgDesc,
+                          height: 200,
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.cover,
                         ),
-                      ),
+                      )
+
+                    // Expanded(
+                    //     child: Container(
+                    //       margin: EdgeInsets.all(5),
+                    //       decoration: new BoxDecoration(
+                    //         image: new DecorationImage(
+                    //           image: NetworkImage(this.post.imgDesc),
+                    //           fit: BoxFit.fill,
+                    //         ),
+                    //         borderRadius: BorderRadius.all(Radius.circular(15)),
+                    //       ),
+                    //     ),
+                    //   )
+                    : Container(),
+                SizedBox(
+                  height: 12,
+                ),
+                Divider(
+                  color: Colors.grey.shade600,
+                ),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            new Icon(
+                              Icons.time_to_leave,
+                              color: Colors.blue,
+                            ),
+                            new Icon(
+                              Icons.assistant_photo,
+                              color: Colors.blue,
+                            ),
+                            new Icon(
+                              Icons.monetization_on,
+                              color: Colors.blue,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: RichText(
+                                text: TextSpan(
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                    text: "From : ",
+                                    children: [
+                                      TextSpan(
+                                        text: this.post.from,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                  text: "From : ",
+                                  children: [
+                                    TextSpan(
+                                      text: this.post.from,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                  text: "From : ",
+                                  children: [
+                                    TextSpan(
+                                      text: this.post.from,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                          ],
+                        ),
+                      ],
                     )
-                  : Container(),
-              Divider(
-                color: Colors.grey.shade600,
-              ),
-              buildFooter(
-                  buildIconWithContxt(
-                      Icons.time_to_leave, "From :  ", "Marrakech"),
-                  buildIconWithContxt(
-                      Icons.assistant_photo, "To :  ", "AGADIR")),
-              buildFooter(
-                  buildIconWithContxt(Icons.access_time, "Time :  ", "15:30"),
-                  buildIconWithContxt(
-                      Icons.monetization_on, "Price :  ", "100 DH")),
-              Divider(
-                color: Colors.grey.shade600,
-              ),
-              Container(
-                padding: EdgeInsets.only(bottom: 5),
-                child: InkWell(
-                  onTap: () => Navigator.push(
-                      context, SlideRightRoute(page: Messages())),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        Icons.send,
-                        color: Colors.blue,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        "contact",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                    // buildIconWithContxt(
+                    //     Icons.time_to_leave, "From :  ", this.post.from),
+                    // buildIconWithContxt(
+                    //     Icons.assistant_photo, "To :  ", this.post.to),
+                    // buildIconWithContxt(
+                    //   Icons.access_time,
+                    //   "Time :  ",
+                    //   Util.convertDateToString(this.post.date) +
+                    //       " At " +
+                    //       Util.convertTimeToString(this.post.time),
+                    // ),
+                    // buildIconWithContxt(
+                    //     Icons.monetization_on, "Price :  ", this.post.price),
+                  ],
+                ),
+                Divider(
+                  color: Colors.grey.shade600,
+                ),
+                Container(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: InkWell(
+                    onTap: () => Navigator.push(
+                        context, SlideRightRoute(page: Messages())),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.send,
+                          color: Colors.blue,
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "contact",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -134,7 +246,7 @@ class BuildPost extends StatelessWidget {
 
   Row buildIconWithContxt(IconData icon, String title, String description) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         new Icon(
           icon,
