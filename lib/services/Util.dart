@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:crypto/crypto.dart';
@@ -8,6 +9,10 @@ class Util {
     return TimeOfDay(
         hour: int.parse(time.split(":")[0]),
         minute: int.parse(time.split(":")[1]));
+  }
+
+  static String convertTimeToString(TimeOfDay timeOfDay) {
+    return "${timeOfDay.hour}:${timeOfDay.minute}";
   }
 
   static DateTime convertToDateTime(String birthDay) {

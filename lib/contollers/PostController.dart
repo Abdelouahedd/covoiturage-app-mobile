@@ -4,28 +4,28 @@ import 'package:covoiturage_app/models/Post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
 class PostController {
   final db = Firestore.instance;
   Post _post;
+  var uuid = Uuid();
+
   PostController({Post post}) : _post = post;
+  void setPost(Post p) => _post = p;
 
   Future<bool> createPost(File desc) async {
     bool returnVal = false;
-    try {
-      this._uploadFile(desc);
-    } catch (e) {
-      print("Error while uploading image for post : ${e.code}");
-    }
+    if (desc != null)
+      await this.uploadFile(desc).then((value) => _post.imgDesc = value);
+   
     await db
         .collection("posts")
-        .add(_post.toJson())
-        .then((value) => {
-              print(value.documentID),
-              returnVal = true,
-            })
+        .document(_post.id)
+        .setData(_post.toJson())
+        .then((value) => returnVal = true)
         .catchError((onError) => {
-              print("Error while add new post : ${onError.code}"),
+              print("Error while add new post : ${onError.toString()}"),
               returnVal = false,
             });
     return returnVal;
@@ -88,24 +88,29 @@ class PostController {
     return posts;
   }
 
-  Future _uploadFile(File avatarImageFile) async {
-    String fileName = _post.id;
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putFile(avatarImageFile);
-    StorageTaskSnapshot storageTaskSnapshot;
-    uploadTask.onComplete.then((value) {
-      if (value.error == null) {
-        storageTaskSnapshot = value;
-        storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-          _post.imgDesc = downloadUrl;
-        }, onError: (err) {
-          print("Error ${_post.imgDesc}");
-        });
-      } else {
-        print("Error ${_post.imgDesc} is not img");
-      }
-    }, onError: (err) {
-      print("Error : ${err.toString()}");
-    });
+  Future<String> uploadFile(File avatarImageFile) async {
+    String imgPath;
+    if (avatarImageFile != null) {
+      String fileName = _post.id;
+      StorageReference reference =
+          FirebaseStorage.instance.ref().child(fileName);
+      StorageUploadTask uploadTask = reference.putFile(avatarImageFile);
+      StorageTaskSnapshot storageTaskSnapshot;
+      await uploadTask.onComplete.then((value) async {
+        if (value.error == null) {
+          storageTaskSnapshot = value;
+          await storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+            imgPath = downloadUrl.toString();
+          }, onError: (err) {
+            print("Error ${avatarImageFile.path}");
+          });
+        } else {
+          print("Error ${avatarImageFile.path} is not img");
+        }
+      }, onError: (err) {
+        print("Error : ${err.toString()}");
+      });
+    }
+    return imgPath;
   }
 }

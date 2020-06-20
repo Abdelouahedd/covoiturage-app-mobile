@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:covoiturage_app/services/Util.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'User.dart';
 
@@ -27,6 +28,7 @@ class Post {
       this.price})
       : _id = id;
   String get id => _id;
+  void setId(String uuid) => _id = uuid;
 
   factory Post.fromRawJson(String str) => Post.fromJson(json.decode(str));
 
@@ -37,7 +39,7 @@ class Post {
         from: json["from"],
         to: json["to"],
         time: Util.convertToTime(json["time"]),
-        date: Util.convertToDateTime(json["date"]),
+        date: (json["date"] as Timestamp).toDate(),
         price: json["price"] == null ? null : json["price"],
         description: json["description"] == null ? null : json["description"],
         imgDesc: json["imgDesc"] == null ? null : json["imgDesc"],
@@ -45,14 +47,28 @@ class Post {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id == null ? null : id,
-        "from": from == null ? null : from,
-        "to": to == null ? null : to,
-        "time": time == null ? null : time,
-        "date": date == null ? null : Util.convertDateToString(date),
-        "price": price == null ? null : price,
-        "description": description == null ? null : description,
-        "imgDesc": imgDesc == null ? null : imgDesc,
-        "user": user == null ? null : user.toJson(),
+        "id": id,
+        "from": from,
+        "to": to,
+        "time": Util.convertTimeToString(time),
+        "date": date,
+        "price": price,
+        "description": description,
+        "imgDesc": imgDesc??' ' ,
+        "user": user.toJson(),
       };
+
+  @override
+  String toString() {
+    return """
+   Post { \n
+      $id
+      $from --> $to\n
+      $date --> at $time\n
+      $description\n
+      image  : $imgDesc
+      --------- user ------\n   }
+   \n
+     """;
+  }
 }

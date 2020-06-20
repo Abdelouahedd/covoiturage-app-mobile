@@ -1,10 +1,18 @@
 import 'dart:io';
 
-import 'package:covoiturage_app/widgets/Input.dart';
+import 'package:covoiturage_app/contollers/PostController.dart';
+import 'package:covoiturage_app/contollers/UserSession.dart';
+import 'package:covoiturage_app/models/Post.dart';
+import 'package:covoiturage_app/models/User.dart';
+import 'package:covoiturage_app/services/Util.dart';
+import 'package:covoiturage_app/widgets/CustomTextField.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
+import 'package:covoiturage_app/widgets/ShowSnackBar.dart';
+import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 enum TypeClient { Passager, Conducteur }
 
@@ -15,19 +23,34 @@ class Trajet extends StatefulWidget {
 
 class _TrajetState extends State<Trajet> {
   TypeClient _client = TypeClient.Conducteur;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _autoValidate = false;
+  bool isLoading = false;
+
+  PostController _postController;
+  UserSession _userSession;
+  var uuid = Uuid();
+  String from, to, time, date, price, description;
+  User currentUser;
   File _image;
   DateTime selectedDate = DateTime.now();
 
-  TextEditingController _from = new TextEditingController();
-  TextEditingController _to = new TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _postController = new PostController();
+    _userSession = new UserSession();
+    _userSession.getCurrentUser().then((user) => currentUser = user);
+  }
+
   TextEditingController _time = new TextEditingController();
   TextEditingController _date = new TextEditingController();
-  TextEditingController _price = new TextEditingController();
   TextEditingController _description = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
+    this.setState(() {
       _image = image;
       if (_image != null) {
         throw new Exception("Could not pick image from galery");
@@ -37,7 +60,7 @@ class _TrajetState extends State<Trajet> {
 
   Future getImageFromCamera() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    setState(() {
+    this.setState(() {
       _image = image;
       if (_image != null) {
         throw new Exception("Could not pick image from camera");
@@ -50,7 +73,10 @@ class _TrajetState extends State<Trajet> {
       initialTime: TimeOfDay.now(),
       context: context,
     );
-    selectedTime.then((value) => _time.text = value.format(context));
+    selectedTime.then((value) => {
+          _time.text = value.format(context),
+          time = value.format(context),
+        });
   }
 
   Future<Null> _selectDate(BuildContext context) async {
@@ -65,109 +91,213 @@ class _TrajetState extends State<Trajet> {
       setState(() {
         selectedDate = picked;
         _date.text = DateFormat('yyyy-MM-dd').format(picked);
+        date = DateFormat('yyyy-MM-dd').format(picked);
       });
   }
 
-  void submitPost() {
+  bool validateForm() {
+    if (!_formKey.currentState.validate()) {
+      this.setState(() {
+        _autoValidate = true;
+      });
+      return false;
+    }
+    return true;
+  }
+
+  void submitPost() async {
+    if (validateForm()) {
+      _formKey.currentState.save();
+      Post post = new Post(
+          id: uuid.v1(),
+          date: Util.convertToDateTime(date),
+          description: description,
+          from: from,
+          price: price,
+          to: to,
+          time: Util.convertToTime(time),
+          user: currentUser);
+      _postController.setPost(post);
+      bool result = false;
+      this.setState(() {
+        isLoading = true;
+      });
+      await _postController.createPost(_image).then((value) => result = value);
+      this.setState(() {
+        isLoading = false;
+      });
+      result == true
+          ? {
+              Future.delayed(new Duration(milliseconds: 5)).then((value) => {
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: new ShowSnackBar(
+                          color: Colors.green,
+                          msg: "Post created sucessefully",
+                        ),
+                      ),
+                    ),
+                    _formKey.currentState.reset(),
+                  }),
+              // Navigator.pushReplacement(context, ScaleRoute(page: ())),
+            }
+          : {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: new ShowSnackBar(
+                    color: Colors.red,
+                    msg: "Probleme while Creating a new Post",
+                  ),
+                ),
+              )
+            };
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
 
-    return SingleChildScrollView(
-      child: Container(
-        decoration: new BoxDecoration(),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Flexible(
-                  child: RadioListTile<TypeClient>(
-                      autofocus: true,
-                      activeColor: Colors.blueAccent,
-                      title: Text("Passager"),
-                      value: TypeClient.Passager,
-                      groupValue: _client,
-                      onChanged: (TypeClient typeClient) => this.setState(() {
-                            _client = typeClient;
-                          })),
-                ),
-                Flexible(
-                  child: RadioListTile<TypeClient>(
-                      activeColor: Colors.blueAccent,
-                      title: Text("Conducteur"),
-                      value: TypeClient.Conducteur,
-                      groupValue: _client,
-                      onChanged: (TypeClient typeClient) => this.setState(() {
-                            _client = typeClient;
-                          })),
-                ),
-              ],
-            ),
-            new Input("From", Icons.time_to_leave, 5, _from),
-            new Input("To  ", Icons.assistant_photo, 5, _to),
-            new Input(
-              "Time  ",
-              Icons.access_time,
-              10,
-              _time,
-              disable: true,
-              tap: () => this.selectedTime(context),
-            ),
-            new Input(
-              "Date  ",
-              Icons.data_usage,
-              10,
-              _date,
-              disable: true,
-              tap: () => this._selectDate(context),
-            ),
-            _client == TypeClient.Passager
-                ? Container()
-                : new Input("Price ", Icons.monetization_on, 10, _price),
-            buildTexterea(),
-            new SizedBox(
-              height: 22,
-            ),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 10,
-              crossAxisAlignment: WrapCrossAlignment.start,
-              alignment: WrapAlignment.spaceEvenly,
-              children: [
-                _image == null
-                    ? Container(
-                        width: size.width / 3,
-                        child: Row(
-                          children: [
-                            new IconButton(
-                              icon: new Icon(Icons.add_photo_alternate),
-                              onPressed: getImage,
-                              color: new Color(0xff203152),
-                            ),
-                            new IconButton(
-                              icon: new Icon(Icons.add_a_photo),
-                              onPressed: getImageFromCamera,
-                              color: new Color(0xff203152),
-                            ),
-                          ],
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Container(
+            decoration: new BoxDecoration(),
+            child: Form(
+              key: _formKey,
+              autovalidate: _autoValidate,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: RadioListTile<TypeClient>(
+                            autofocus: true,
+                            activeColor: Colors.blueAccent,
+                            title: Text("Passager"),
+                            value: TypeClient.Passager,
+                            groupValue: _client,
+                            onChanged: (TypeClient typeClient) =>
+                                this.setState(() {
+                                  _client = typeClient;
+                                })),
+                      ),
+                      Flexible(
+                        child: RadioListTile<TypeClient>(
+                            activeColor: Colors.blueAccent,
+                            title: Text("Conducteur"),
+                            value: TypeClient.Conducteur,
+                            groupValue: _client,
+                            onChanged: (TypeClient typeClient) =>
+                                this.setState(() {
+                                  _client = typeClient;
+                                })),
+                      ),
+                    ],
+                  ),
+                  new CustomTextField(
+                    icon: Icon(Icons.time_to_leave),
+                    hint: "From ",
+                    validator: (v) {
+                      if (v.length == 0) return "* require";
+                    },
+                    onSaved: (newValue) => from = newValue,
+                  ),
+                  new CustomTextField(
+                    icon: Icon(Icons.assistant_photo),
+                    hint: "To ",
+                    validator: (v) {
+                      if (v.length == 0) return "* require";
+                    },
+                    onSaved: (newValue) => to = newValue,
+                  ),
+                  new CustomTextField(
+                    textEditingController: _time,
+                    read: true,
+                    icon: Icon(Icons.access_time),
+                    hint: "Time ",
+                    tap: () => this.selectedTime(context),
+                    validator: (b) {
+                      if (b.length == 0) return "* require";
+                    },
+                  ),
+                  new CustomTextField(
+                    textEditingController: _date,
+                    read: true,
+                    icon: Icon(Icons.data_usage),
+                    hint: "Date ",
+                    tap: () => _selectDate(context),
+                    validator: (b) {
+                      if (b.length == 0) return "* require";
+                    },
+                  ),
+                  _client == TypeClient.Passager
+                      ? Container()
+                      : new CustomTextField(
+                          icon: Icon(Icons.monetization_on),
+                          hint: "Price ",
+                          validator: (v) {
+                            if (v.length == 0) return "* require";
+                          },
+                          onSaved: (newValue) => price = newValue,
                         ),
-                      )
-                    : Container(
-                        width: size.width / 3,
-                        child: Text(
-                          _image.absolute.path,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                        )),
-                // new SizedBox(width: 180,),
-                MyButton("Post", 3, null),
-              ],
+                  buildTexterea(),
+                  new SizedBox(
+                    height: 22,
+                  ),
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 10,
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    alignment: WrapAlignment.spaceEvenly,
+                    children: [
+                      _image == null
+                          ? Container(
+                              width: size.width / 3,
+                              child: Row(
+                                children: [
+                                  new IconButton(
+                                    icon: new Icon(Icons.add_photo_alternate),
+                                    onPressed: getImage,
+                                    color: new Color(0xff203152),
+                                  ),
+                                  new IconButton(
+                                    icon: new Icon(Icons.add_a_photo),
+                                    onPressed: getImageFromCamera,
+                                    color: new Color(0xff203152),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(
+                              width: size.width / 3,
+                              child: Text(
+                                _image.absolute.path,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              )),
+                      // new SizedBox(width: 180,),
+                      MyButton("Post", 3, submitPost),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
-      ),
+        Positioned(
+          child: isLoading
+              ? Container(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor)),
+                  ),
+                  color: Colors.white.withOpacity(0.8),
+                )
+              : Container(),
+        ),
+      ],
     );
   }
 
@@ -178,10 +308,13 @@ class _TrajetState extends State<Trajet> {
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
       decoration: BoxDecoration(
+          border: Border.all(
+              width: 2, color: Colors.blue, style: BorderStyle.solid),
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: Colors.white,
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)]),
-      child: TextField(
+      child: TextFormField(
+        onSaved: (val) => description = val,
         keyboardType: TextInputType.multiline,
         maxLines: null,
         controller: _description,
