@@ -17,7 +17,7 @@ class UserSession {
         });
   }
 
-  Future<bool> destroySession(User user) async {
+  Future<bool> destroySession() async {
     bool returnValue = false;
     await SharedPreferences.getInstance().then((_preferences) =>
         _preferences.clear().then((value) => {returnValue = value}));

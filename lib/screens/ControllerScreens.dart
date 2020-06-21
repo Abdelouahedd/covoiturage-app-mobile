@@ -1,4 +1,6 @@
+import 'package:covoiturage_app/contollers/PostController.dart';
 import 'package:covoiturage_app/contollers/UserSession.dart';
+import 'package:covoiturage_app/models/Post.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/screens/Friends.dart';
 import 'package:covoiturage_app/screens/Trajet.dart';
@@ -17,6 +19,8 @@ class ControllerScreens extends StatefulWidget {
 class _ControllerScreensState extends State<ControllerScreens> {
   User user;
   final UserSession userSession = new UserSession();
+  final PostController postController = new PostController();
+  List<Post> posts = new List();
   List<Item> items;
   int _currentIndex = 0;
   List<Widget> _children;
@@ -33,7 +37,7 @@ class _ControllerScreensState extends State<ControllerScreens> {
           user = value,
           this.setState(() => isLoading = false),
         });
-
+    
     SystemChrome.setEnabledSystemUIOverlays([]);
     _children = [Home(), Trajet(), Friends()];
     this.items = [

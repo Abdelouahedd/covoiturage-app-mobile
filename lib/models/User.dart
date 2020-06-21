@@ -68,7 +68,9 @@ class User extends Object {
       }\n""";
   }
 
-  bool operator == (o) {
-    return o is User && email == o.email && password == o.password;
-  }
+  bool operator == (o) => o is User && email == o.email && password == o.password;
+
+  @override
+  int get hashCode => super.hashCode;
+
 }

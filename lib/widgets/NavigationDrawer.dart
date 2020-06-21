@@ -19,12 +19,23 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   String image;
   UserController userController = new UserController();
   UserSession userSession = new UserSession();
-
+  User user;
   @override
   void initState() {
     super.initState();
     image =
         widget.user == null ? 'assets/images/user.png' : widget.user.profileImg;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userSession.getCurrentUser().then((value) => {
+          user = value,
+          image = user.profileImg == null
+              ? 'assets/images/user.png'
+              : user.profileImg,
+        });
   }
 
   void signOut() async {
@@ -90,7 +101,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               ),
               SizedBox(height: 5.0),
               Text(
-                // widget.user == null ? '' : 
+                // widget.user == null ? '' :
                 widget.user.username,
                 style: TextStyle(
                     color: Colors.black,
@@ -109,7 +120,11 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   children: [
                     _buildRow(Icons.person_pin, "My profile",
                         go: () => Navigator.push(
-                            context, SlideRightRoute(page: ProfilePage()))),
+                            context,
+                            SlideRightRoute(
+                                page: ProfilePage(
+                              user: user,
+                            )))),
                     _buildDivider(),
                     _buildRow(Icons.message, "Messages",
                         showBadge: true,

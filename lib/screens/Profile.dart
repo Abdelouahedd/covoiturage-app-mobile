@@ -1,4 +1,3 @@
-import 'package:covoiturage_app/contollers/UserSession.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/services/Util.dart';
 import 'package:covoiturage_app/widgets/StarDisplay.dart';
@@ -6,26 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class ProfilePage extends StatefulWidget {
+  final User user;
+  ProfilePage({this.user});
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   String image;
-  User user;
-  UserSession userSession;
   bool isLoading = true;
   @override
   void initState() {
     super.initState();
-    userSession = new UserSession();
-    userSession.getCurrentUser().then((value) => {
-          user = value,
-          this.setState(() => isLoading = false),
-          image = user.profileImg == null
-              ? 'assets/images/user.png'
-              : user.profileImg,
-        });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.user != null)
+      this.setState(() {
+        isLoading = false;
+      });
   }
 
   @override
@@ -109,7 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         children: <Widget>[
                                           Center(
                                             child: Text(
-                                              user.username,
+                                              widget.user.username,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .headline6,
@@ -163,9 +163,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   image: DecorationImage(
-                                    image: user == null
+                                    image: widget.user == null
                                         ? AssetImage(image)
-                                        : NetworkImage(user.profileImg),
+                                        : NetworkImage(widget.user.profileImg),
                                     // image: NetworkImage(url)
                                     fit: BoxFit.cover,
                                   ),
@@ -183,22 +183,22 @@ class _ProfilePageState extends State<ProfilePage> {
                               Card(
                                 child: ListTile(
                                   title: Text("Email"),
-                                  subtitle: Text(user.email),
+                                  subtitle: Text(widget.user.email),
                                   leading: Icon(Icons.email),
                                 ),
                               ),
                               Card(
                                 child: ListTile(
                                   title: Text("City"),
-                                  subtitle: Text(user.city),
+                                  subtitle: Text(widget.user.city),
                                   leading: Icon(Icons.location_city),
                                 ),
                               ),
                               Card(
                                 child: ListTile(
                                   title: Text("Birth Day"),
-                                  subtitle: Text(
-                                      Util.convertDateToString(user.birthDay)),
+                                  subtitle: Text(Util.convertDateToString(
+                                      widget.user.birthDay)),
                                   leading: Icon(Icons.calendar_today),
                                 ),
                               ),
@@ -206,7 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: ListTile(
                                   title: Text("Rank "),
                                   subtitle: new StarDisplay(
-                                    value: user.rank.toInt(),
+                                    value: widget.user.rank.toInt(),
                                   ),
                                   leading: Icon(Icons.star),
                                 ),

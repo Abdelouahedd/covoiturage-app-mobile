@@ -13,7 +13,6 @@ import 'package:getflutter/getflutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-
 import 'SignIn.dart';
 
 class SignUp extends StatefulWidget {
@@ -23,6 +22,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool _autoValidate = false;
   TextEditingController birthDayController;
   String email, username, password, city, birthday;
@@ -76,8 +76,9 @@ class _SignUpState extends State<SignUp> {
     return true;
   }
 
-  void submit() {
+  void submit() async {
     if (validateForm()) {
+      _formKey.currentState.save();
       User user = new User(
         email: this.email.trim(),
         city: this.city,
@@ -85,65 +86,46 @@ class _SignUpState extends State<SignUp> {
         username: this.username,
         password: Util.hashPass(this.password),
       );
-      print(
-          "---------------------------------------------------------------- \n");
-      print("password  : ${this.password}");
-      print("user from FORM  : $user");
-      print(
-          "---------------------------------------------------------------- \n");
+      print("Image selected : ${_image.path}");
       UserController controller = new UserController(user: user);
       this.setState(() {
         isLoading = true;
       });
-      controller.signUp(this._image).then((value) => {
-            value == true
-                ? {
-                    this.setState(() {
-                      isLoading = false;
-                    }),
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        content: new ShowSnackBar(
-                          color: Colors.green,
-                          msg: "User sign up sucessefully",
-                        ),
-                      ),
-                    )
-                  }
-                : {
-                    this.setState(() {
-                      isLoading = false;
-                    }),
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        content: new ShowSnackBar(
-                          color: Colors.red,
-                          msg: "Probleme while sign up",
-                        ),
-                      ),
-                    )
-                  },
-          });
-      // this.setState(() {
-      //   isLoading = false;
-      // });
-      sleep(new Duration(milliseconds: 5));
-      Navigator.pushReplacement(context, ScaleRoute(page: SignIn()));
-    } else {
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: new ShowSnackBar(
-            color: Colors.red,
-            msg: "The from is not completed",
-          ),
-        ),
-      );
+      bool result = false;
+      await controller.signUp(this._image).then((value) => result = value);
+      this.setState(() {
+        isLoading = false;
+      });
+      result == true
+          ? {
+              _scaffoldKey.currentState.showSnackBar(
+                SnackBar(
+                  content: new ShowSnackBar(
+                    color: Colors.green,
+                    msg: "User sign up sucessefully",
+                  ),
+                ),
+              ),
+              sleep(new Duration(milliseconds: 5)),
+              Navigator.pushReplacement(context, ScaleRoute(page: SignIn())),
+            }
+          : {
+              _scaffoldKey.currentState.showSnackBar(
+                SnackBar(
+                  content: new ShowSnackBar(
+                    color: Colors.red,
+                    msg: "Probleme while sign up",
+                  ),
+                ),
+              )
+            };
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: [
           SingleChildScrollView(
