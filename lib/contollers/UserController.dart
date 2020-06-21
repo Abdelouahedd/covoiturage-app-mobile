@@ -6,9 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-
 class UserController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final UserSession session = new UserSession();
   User _user;
   UserController({User user}) : _user = user;
 
@@ -122,10 +122,27 @@ class UserController {
   }
 
   Future<bool> isLogin() async {
-    UserSession session = new UserSession();
     bool returnVal = false;
     await session.checkEmailAndPass().then((user) => this.getUser(user.id));
     _user != null ? returnVal = true : returnVal = false;
     return returnVal;
+  }
+
+  Future<List<User>> getUsers() async {
+    List<User> users = new List();
+    User currentUser = await session.getCurrentUser();
+    await Firestore.instance
+        .collection("users")
+        .getDocuments()
+        .then(
+          (value) => users = value.documents
+              .map((e) => User.fromJson(e.data))
+              .toList()
+              .where((element) => element == currentUser)
+              .toList(),
+        )
+        .catchError((onError) => print(
+            "Error while getting all users from db ${onError.toString()}"));
+    return users;
   }
 }

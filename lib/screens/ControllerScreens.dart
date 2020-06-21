@@ -19,12 +19,9 @@ class ControllerScreens extends StatefulWidget {
 class _ControllerScreensState extends State<ControllerScreens> {
   User user;
   final UserSession userSession = new UserSession();
-  final PostController postController = new PostController();
-  List<Post> posts = new List();
   List<Item> items;
   int _currentIndex = 0;
   List<Widget> _children;
-  bool isLoading = true;
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final Color primary = Colors.white;
   final Color active = Colors.grey.shade800;
@@ -33,11 +30,8 @@ class _ControllerScreensState extends State<ControllerScreens> {
   @override
   void initState() {
     super.initState();
-    userSession.getCurrentUser().then((value) => {
-          user = value,
-          this.setState(() => isLoading = false),
-        });
-    
+    userSession.getCurrentUser().then((value) => user = value);
+
     SystemChrome.setEnabledSystemUIOverlays([]);
     _children = [Home(), Trajet(), Friends()];
     this.items = [
@@ -82,23 +76,7 @@ class _ControllerScreensState extends State<ControllerScreens> {
         ),
       ),
       drawer: NavigationDrawer(user: this.user),
-      body: Stack(
-        children: [
-          _children[_currentIndex],
-          Positioned(
-            child: isLoading
-                ? Container(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).primaryColor)),
-                    ),
-                    color: Colors.white.withOpacity(0.8),
-                  )
-                : Container(),
-          ),
-        ],
-      ),
+      body: _children[_currentIndex],
       bottomNavigationBar: TitledBottomNavigationBar(
         items: items,
         currentIndex: _currentIndex,
