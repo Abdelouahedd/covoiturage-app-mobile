@@ -16,8 +16,11 @@ class UserController {
     try {
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
-          .then((value) => this.getUser(value.user.uid))
-          .timeout(new Duration(seconds: 60))
+          .then((value) => {
+                this.getUser(value.user.uid),
+                print("val from Sign In $value"),
+              })
+          // .timeout(new Duration(seconds: 60))
           .catchError(
             (onError) =>
                 print("Error while sign in to app :${onError.message}"),
@@ -73,29 +76,6 @@ class UserController {
       returnVal = false;
     }
     return returnVal;
-  }
-
-  Future _uploadFile(File avatarImageFile) async {
-    String fileName = _user.id;
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putFile(avatarImageFile);
-    StorageTaskSnapshot storageTaskSnapshot;
-    uploadTask.onComplete.then((value) {
-      if (value.error == null) {
-        storageTaskSnapshot = value;
-        storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-          _user.profileImg = downloadUrl;
-          print("downloadUrl === > $downloadUrl");
-          print("_user.profileImg === > ${_user.profileImg}");
-        }, onError: (err) {
-          print("Error ${_user.profileImg}");
-        });
-      } else {
-        print("Error ${_user.profileImg} is not img");
-      }
-    }, onError: (err) {
-      print("Error : ${err.toString()}");
-    });
   }
 
   Future<bool> signOut() async {

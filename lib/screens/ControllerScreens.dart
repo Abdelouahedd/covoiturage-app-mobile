@@ -1,6 +1,4 @@
-import 'package:covoiturage_app/contollers/PostController.dart';
 import 'package:covoiturage_app/contollers/UserSession.dart';
-import 'package:covoiturage_app/models/Post.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/screens/Friends.dart';
 import 'package:covoiturage_app/screens/Trajet.dart';
@@ -18,47 +16,26 @@ class ControllerScreens extends StatefulWidget {
 
 class _ControllerScreensState extends State<ControllerScreens> {
   User user;
-  final UserSession userSession = new UserSession();
   List<Item> items;
   int _currentIndex = 0;
-  List<Widget> _children;
+  final List<Widget> _children = [Home(), Trajet(), Friends()];
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
-  final Color primary = Colors.white;
-  final Color active = Colors.grey.shade800;
-  final Color divider = Colors.grey.shade600;
+  final UserSession userSession = new UserSession();
 
   @override
   void initState() {
     super.initState();
+    //get current user connected
     userSession.getCurrentUser().then((value) => user = value);
-
     SystemChrome.setEnabledSystemUIOverlays([]);
-    _children = [Home(), Trajet(), Friends()];
     this.items = [
       new Item(
-          'Home',
-          Icons.home,
-          () => this.setState(() {
-                _currentIndex = 0;
-              })),
+          'Home', Icons.home, () => this.setState(() => _currentIndex = 0)),
+      Item('Trajet', Icons.add_circle_outline,
+          () => this.setState(() => _currentIndex = 1)),
       Item(
-          'Trajet',
-          Icons.add_circle_outline,
-          () => this.setState(() {
-                _currentIndex = 1;
-              })),
-      Item(
-          'Friends',
-          Icons.group,
-          () => this.setState(() {
-                _currentIndex = 2;
-              })),
+          'Friends', Icons.group, () => this.setState(() => _currentIndex = 2)),
     ];
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -70,9 +47,7 @@ class _ControllerScreensState extends State<ControllerScreens> {
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: Icon(Icons.menu),
-          onPressed: () {
-            _key.currentState.openDrawer();
-          },
+          onPressed: () => _key.currentState.openDrawer(),
         ),
       ),
       drawer: NavigationDrawer(user: this.user),

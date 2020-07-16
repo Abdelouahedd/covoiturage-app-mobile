@@ -65,7 +65,7 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (!(_searchText.isEmpty)) {
+    if (_searchText.length > 0) {
       List<Post> tempList = new List();
       for (int i = 0; i < filterPosts.length; i++) {
         if (filterPosts[i].from.toLowerCase().contains(_searchText) ||
@@ -77,7 +77,6 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
         filterPosts = tempList;
       });
     }
-
     return isLoading
         ? Container(
             child: Center(
@@ -95,12 +94,6 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
               ),
               Expanded(
                 child: ListView.builder(
-                  // separatorBuilder: (context, index) => Padding(
-                  //   padding: const EdgeInsets.all(2.0),
-                  //   child: Divider(
-                  //     color: Colors.grey,
-                  //   ),
-                  // ),
                   itemCount: filterPosts.length,
                   itemBuilder: (context, index) =>
                       new BuildPost(filterPosts[index]),

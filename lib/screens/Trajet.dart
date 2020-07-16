@@ -8,7 +8,6 @@ import 'package:covoiturage_app/services/Util.dart';
 import 'package:covoiturage_app/widgets/CustomTextField.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
 import 'package:covoiturage_app/widgets/ShowSnackBar.dart';
-import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +31,7 @@ class _TrajetState extends State<Trajet> {
   UserSession _userSession;
   var uuid = Uuid();
   String from, to, time, date, price, description;
+  int nbrPlaces;
   User currentUser;
   File _image;
   DateTime selectedDate = DateTime.now();
@@ -46,7 +46,6 @@ class _TrajetState extends State<Trajet> {
 
   TextEditingController _time = new TextEditingController();
   TextEditingController _date = new TextEditingController();
-  TextEditingController _description = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -111,7 +110,7 @@ class _TrajetState extends State<Trajet> {
       Post post = new Post(
           id: uuid.v1(),
           date: Util.convertToDateTime(date),
-          description: description,
+          nbrPlaces: nbrPlaces,
           from: from,
           price: price,
           to: to,
@@ -122,7 +121,7 @@ class _TrajetState extends State<Trajet> {
       this.setState(() {
         isLoading = true;
       });
-      await _postController.createPost(_image).then((value) => result = value);
+      await _postController.createPost().then((value) => result = value);
       this.setState(() {
         isLoading = false;
       });
@@ -156,7 +155,7 @@ class _TrajetState extends State<Trajet> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    // final Size size = MediaQuery.of(context).size;
 
     return Stack(
       children: [
@@ -231,6 +230,14 @@ class _TrajetState extends State<Trajet> {
                       if (b.length == 0) return "* require";
                     },
                   ),
+                  new CustomTextField(
+                    onSaved: (val) => nbrPlaces = int.parse(val),
+                    icon: Icon(Icons.format_list_numbered),
+                    hint: "Number of place ",
+                    validator: (b) {
+                      if (b.length == 0) return "* require";
+                    },
+                  ),
                   _client == TypeClient.Passager
                       ? Container()
                       : new CustomTextField(
@@ -241,45 +248,45 @@ class _TrajetState extends State<Trajet> {
                           },
                           onSaved: (newValue) => price = newValue,
                         ),
-                  buildTexterea(),
                   new SizedBox(
                     height: 22,
                   ),
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 10,
-                    crossAxisAlignment: WrapCrossAlignment.start,
-                    alignment: WrapAlignment.spaceEvenly,
-                    children: [
-                      _image == null
-                          ? Container(
-                              width: size.width / 3,
-                              child: Row(
-                                children: [
-                                  new IconButton(
-                                    icon: new Icon(Icons.add_photo_alternate),
-                                    onPressed: getImage,
-                                    color: new Color(0xff203152),
-                                  ),
-                                  new IconButton(
-                                    icon: new Icon(Icons.add_a_photo),
-                                    onPressed: getImageFromCamera,
-                                    color: new Color(0xff203152),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Container(
-                              width: size.width / 3,
-                              child: Text(
-                                _image.absolute.path,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                              )),
-                      // new SizedBox(width: 180,),
-                      MyButton("Post", 3, submitPost),
-                    ],
-                  ),
+                  MyButton("Post", 2, submitPost),
+
+                  // Wrap(
+                  //   spacing: 8.0,
+                  //   runSpacing: 10,
+                  //   crossAxisAlignment: WrapCrossAlignment.start,
+                  //   alignment: WrapAlignment.spaceEvenly,
+                  //   children: [
+                  //     _image == null
+                  //         ? Container(
+                  //             width: size.width / 3,
+                  //             child: Row(
+                  //               children: [
+                  //                 new IconButton(
+                  //                   icon: new Icon(Icons.add_photo_alternate),
+                  //                   onPressed: getImage,
+                  //                   color: new Color(0xff203152),
+                  //                 ),
+                  //                 new IconButton(
+                  //                   icon: new Icon(Icons.add_a_photo),
+                  //                   onPressed: getImageFromCamera,
+                  //                   color: new Color(0xff203152),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           )
+                  //         : Container(
+                  //             width: size.width / 3,
+                  //             child: Text(
+                  //               _image.absolute.path,
+                  //               softWrap: true,
+                  //               overflow: TextOverflow.ellipsis,
+                  //             )),
+                  //     // new SizedBox(width: 180,),
+                  //   ],
+                  // ),
                 ],
               ),
             ),
@@ -298,34 +305,6 @@ class _TrajetState extends State<Trajet> {
               : Container(),
         ),
       ],
-    );
-  }
-
-  Widget buildTexterea() {
-    return Container(
-      width: MediaQuery.of(context).size.width / 1.1,
-      height: 100,
-      margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-      decoration: BoxDecoration(
-          border: Border.all(
-              width: 2, color: Colors.blue, style: BorderStyle.solid),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)]),
-      child: TextFormField(
-        onSaved: (val) => description = val,
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-        controller: _description,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Description ..",
-          hintStyle: TextStyle(color: Colors.blue),
-          errorStyle: TextStyle(color: Colors.red),
-        ),
-        style: TextStyle(color: Colors.blue[700]),
-      ),
     );
   }
 }

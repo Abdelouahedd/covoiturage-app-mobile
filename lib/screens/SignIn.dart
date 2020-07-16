@@ -52,8 +52,6 @@ class _SignInState extends State<SignIn> {
 
     if (validateForm()) {
       form.save();
-      print("$_email -- ${Util.hashPass(this._password)} \n");
-      print("$_email -- $_password");
       String hashPassword = Util.hashPass(this._password);
       this.setState(() {
         isLoading = true;
@@ -174,6 +172,7 @@ class _SignInState extends State<SignIn> {
                                 if (v.length == 0) return "* require";
                                 if (!regex.hasMatch(v))
                                   return 'Enter Valid Email';
+                                
                               },
                               onSaved: (newValue) => {
                                 _email = newValue,
@@ -190,6 +189,7 @@ class _SignInState extends State<SignIn> {
                                 if (v.length == 0) return "* require";
                                 if (v.length < 2)
                                   return 'Password can\'t be less then 6 characteres  ';
+                                
                               },
                               onSaved: (newValue) => _password = newValue,
                             ),

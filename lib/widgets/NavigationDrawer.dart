@@ -101,16 +101,14 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               ),
               SizedBox(height: 5.0),
               Text(
-                // widget.user == null ? '' :
-                widget.user.username,
+                widget.user == null ? '' : widget.user.username,
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600),
               ),
               Text(
-                // widget.user == null ? ' ' :
-                widget.user.email,
+                widget.user == null ? ' ' : widget.user.email,
                 style: TextStyle(color: Colors.grey.shade800, fontSize: 16.0),
               ),
               SizedBox(height: 30.0),

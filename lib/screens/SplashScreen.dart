@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen>
   Timer _timer;
   bool login = false;
   UserController userController = new UserController();
-  var si = 0.0;
+  var currentOpacity = 0.0;
 
   @override
   void initState() {
@@ -45,15 +45,15 @@ class _SplashScreenState extends State<SplashScreen>
   startAnimation() async {
     const oneSec = const Duration(seconds: 1);
     var start = 8;
-    _timer = new Timer.periodic(oneSec, (Timer timer)  {
+    _timer = new Timer.periodic(oneSec, (Timer timer) {
       if (mounted) {
         this.setState(() {
-          si += 0.1;
+          currentOpacity += 0.1;
         });
       }
       if (start == 0) {
         sleep(Duration(seconds: 3));
-         login == true ? goToHomePage() : goToLoginPage();
+        login == true ? goToHomePage() : goToLoginPage();
       }
       start -= 1;
     });
@@ -75,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen>
       decoration: new BoxDecoration(color: Colors.white10),
       child: Center(
         child: Opacity(
-          opacity: si,
+          opacity: currentOpacity,
           child: new Container(
             width: MediaQuery.of(context).size.width / 2,
             alignment: Alignment.center,

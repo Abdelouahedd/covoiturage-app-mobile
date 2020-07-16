@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  CustomTextField({
-    this.icon,
-    this.hint,
-    this.obsecure = false,
-    this.read = false,
-    this.validator,
-    this.onSaved,
-    this.tap,
-    this.textEditingController,
-  });
+  CustomTextField(
+      {this.icon,
+      this.hint,
+      this.obsecure = false,
+      this.read = false,
+      this.validator,
+      this.onSaved,
+      this.tap,
+      this.textEditingController,
+      this.initialValue});
   final FormFieldSetter<String> onSaved;
   final Function tap;
   final Icon icon;
@@ -19,11 +19,13 @@ class CustomTextField extends StatelessWidget {
   final FormFieldValidator<String> validator;
   final TextEditingController textEditingController;
   final bool read;
+  final String initialValue;
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20, top: 5),
       child: TextFormField(
+        initialValue: this.initialValue,
         readOnly: read,
         controller: this.textEditingController,
         onSaved: onSaved,

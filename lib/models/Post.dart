@@ -13,8 +13,7 @@ class Post {
   TimeOfDay time;
   DateTime date;
   String price;
-  String description;
-  String imgDesc;
+  int nbrPlaces;
   User user;
   Post(
       {String id,
@@ -22,8 +21,7 @@ class Post {
       this.to,
       this.time,
       this.date,
-      this.description,
-      this.imgDesc,
+      this.nbrPlaces,
       this.user,
       this.price})
       : _id = id;
@@ -41,8 +39,7 @@ class Post {
         time: Util.convertToTime(json["time"]),
         date: (json["date"] as Timestamp).toDate(),
         price: json["price"] == null ? null : json["price"],
-        description: json["description"] == null ? null : json["description"],
-        imgDesc: json["imgDesc"] == null ? null : json["imgDesc"],
+        nbrPlaces: json["nbrPlaces"], //== null ? null : json["nbrPlaces"],
         user: User.fromJson(json["user"]),
       );
 
@@ -53,8 +50,7 @@ class Post {
         "time": Util.convertTimeToString(time),
         "date": date,
         "price": price,
-        "description": description,
-        "imgDesc": imgDesc??' ' ,
+        "nbrPlaces": nbrPlaces,
         "user": user.toJson(),
       };
 
@@ -65,8 +61,7 @@ class Post {
       $id
       $from --> $to\n
       $date --> at $time\n
-      $description\n
-      image  : $imgDesc
+      nbrPlaces : $nbrPlaces\n
       --------- user ------\n   }
    \n
      """;
