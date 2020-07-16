@@ -93,11 +93,11 @@ class PostController {
     return returnVal;
   }
 
-  Future<bool> deletePost() async {
+  Future<bool> deletePost(Post p) async {
     bool returnVal = false;
     await db
         .collection("posts")
-        .document(_post.id)
+        .document(p.id)
         .delete()
         .then((value) => returnVal = true)
         .catchError((onError) => {
