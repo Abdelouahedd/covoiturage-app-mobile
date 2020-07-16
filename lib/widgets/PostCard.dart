@@ -2,19 +2,18 @@ import 'package:covoiturage_app/models/Post.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
 import 'package:covoiturage_app/screens/UpdatePost.dart';
 import 'package:covoiturage_app/services/Util.dart';
+import 'package:covoiturage_app/widgets/MyButton.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'CustomTextField.dart';
-import 'MyButton.dart';
-
 class BuildPost extends StatelessWidget {
   final Post post;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   BuildPost(this.post);
   @override
   Widget build(BuildContext context) {
-    // var age = DateTime.now().difference(post.user.birthDay).inDays;
     return Card(
       margin: EdgeInsets.only(top: 4),
       elevation: 8,
@@ -64,9 +63,10 @@ class BuildPost extends StatelessWidget {
                           ),
                           InkWell(
                             onTap: () {
-                              showBottomSheet(
-                                context: context,
-                                builder: (context) {
+                              Scaffold.of(context).showBottomSheet(
+                                // context: context,
+                                // builder:
+                                (context) {
                                   return Container(
                                       height:
                                           MediaQuery.of(context).size.height /
@@ -89,14 +89,6 @@ class BuildPost extends StatelessWidget {
                                                   ),
                                                 ),
                                               );
-                                              // Navigator.push<void>(
-                                              //   context,
-                                              //   MaterialPageRoute(
-                                              //     builder: (context) =>
-                                              //         UpdatePost(),
-                                              //     fullscreenDialog: true,
-                                              //   ),
-                                              // );
                                             },
                                             title: Text(
                                               'update your post',
@@ -109,7 +101,8 @@ class BuildPost extends StatelessWidget {
                                             thickness: 1,
                                           ),
                                           ListTile(
-                                            onTap: () => print("update post"),
+                                            onTap: () =>
+                                                _showAlertDialog(context),
                                             title: Text(
                                               'delete your post',
                                               style: GoogleFonts.getFont(
@@ -118,20 +111,7 @@ class BuildPost extends StatelessWidget {
                                             trailing: Icon(Icons.delete),
                                           ),
                                         ],
-                                      )
-                                      /*  ListView.separated(
-                                      itemCount: 4,
-                                      separatorBuilder:
-                                          (BuildContext context, int index) =>
-                                              Divider(),
-                                      itemBuilder:
-                                          (BuildContext context, index) {
-                                        return ListTile(
-                                          title: Text('item $index'),
-                                        );
-                                      },
-                                    ), */
-                                      );
+                                      ));
                                 },
                               );
                             },
@@ -147,25 +127,12 @@ class BuildPost extends StatelessWidget {
                           ),
                         ],
                       ),
-                      /*  trailing: InkWell(
-                        onTap: () => print("show snackbar"),
-                        child: Text(
-                          '...',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ), */
                       subtitle: Padding(
                         padding: EdgeInsets.only(top: 5),
                         child: Wrap(
                           alignment: WrapAlignment.start,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            // Divider(color: Colors.white,),
                             Text(
                               this.post.from.toUpperCase(),
                               style: TextStyle(
@@ -182,7 +149,6 @@ class BuildPost extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black87),
                             ),
-                            // Divider(),
                             RichText(
                               text: TextSpan(
                                   text: "Time : ",
@@ -273,6 +239,44 @@ class BuildPost extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showAlertDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    final dialogTextStyle = theme.textTheme.subtitle1
+        .copyWith(color: theme.textTheme.caption.color);
+    _showDemoDialog<String>(
+      context: context,
+      child: AlertDialog(
+        content: Text(
+          "Are you shure to delete your post ?",
+          style: dialogTextStyle,
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              MyButton("confirme", 4, () => print("hay")),
+              MyButton("cancel", 4,
+                  () => Navigator.of(context, rootNavigator: true).pop()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showDemoDialog<T>({BuildContext context, Widget child}) async {
+    child = Container(
+      child: Theme(
+        data: Theme.of(context),
+        child: child,
+      ),
+    );
+    await showDialog<T>(
+      context: context,
+      builder: (context) => child,
     );
   }
 }

@@ -116,7 +116,7 @@ class _UpdatePostState extends State<UpdatePost> {
                     ),
                     _formKey.currentState.reset(),
                   }),
-              Future.delayed(new Duration(microseconds: 5)).then(
+              Future.delayed(new Duration(seconds: 2)).then(
                 (value) => Navigator.pop(context),
               )
               // Navigator.pushReplacement(context, ScaleRoute(page: ())),
