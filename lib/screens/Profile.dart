@@ -3,6 +3,7 @@ import 'package:covoiturage_app/services/Util.dart';
 import 'package:covoiturage_app/widgets/StarDisplay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProfilePage extends StatefulWidget {
   final User user;
@@ -36,212 +37,169 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: PreferredSize(
-      //   preferredSize: Size.fromHeight(35.0), // here the desired height
-      //   child: AppBar(
-      //     title: Center(child: Text("Profile"),),
-      //     leading: IconButton(
-      //       icon: Icon(
-      //         Icons.arrow_back,
-      //         color: Colors.white,
-      //         size: 30,
-      //       ),
-      //       onPressed: () => Navigator.of(context).pop(),
-      //     ),
-      //   ),
-      // ),
-      body: isLoading
-          ? Container(
-              child: Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor),
-                ),
-              ),
-              color: Colors.white.withOpacity(0.8),
-            )
-          : SingleChildScrollView(
-              child: Container(
-                decoration: new BoxDecoration(
-                  color: Colors.grey.shade300,
-                ),
-                child: Stack(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 160,
-                      width: double.infinity,
-                      child: Container(
-                        decoration: new BoxDecoration(color: Colors.blue),
-                      ),
-                    ),
-                    Positioned(
-                      top: 10,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 30,
+      body: Container(
+        decoration: new BoxDecoration(
+          color: Colors.blue.withOpacity(0.2),
+        ),
+        height: MediaQuery.of(context).size.height,
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.fromLTRB(16.0, 50.0, 16.0, 16.0),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(18.0),
+                  margin: EdgeInsets.only(top: 2.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          widget.user.username,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
-                        onPressed: () => Navigator.of(context).pop(),
+                        leading: widget.user == null
+                            ? Image(image: AssetImage(image))
+                            : CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(widget.user.profileImg),
+                                radius: 30,
+                              ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(16.0, 50.0, 16.0, 16.0),
-                      child: Column(
+                      /*   SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Stack(
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.all(18.0),
-                                margin: EdgeInsets.only(top: 2.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(left: 96.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Center(
-                                            child: Text(
-                                              widget.user.username,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline6,
-                                            ),
-                                          ),
-                                          // ListTile(
-                                          //   contentPadding: EdgeInsets.all(0),
-                                          //   title: Text("Product Designer"),
-                                          //   subtitle: Text("Kathmandu"),
-                                          // ),
-
-                                          SizedBox(height: 35.0),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: 15.0),
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Column(
-                                            children: <Widget>[
-                                              Text("0"),
-                                              Text("Posts")
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            children: <Widget>[
-                                              Text("0"),
-                                              Text("Comments")
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            children: <Widget>[
-                                              Text("0"),
-                                              Text("Favourites")
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: 60,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  image: DecorationImage(
-                                    image: widget.user == null
-                                        ? AssetImage(image)
-                                        : NetworkImage(widget.user.profileImg),
-                                    // image: NetworkImage(url)
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                margin: EdgeInsets.only(left: 16.0, top: 30),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text("Posts"),
+                                Text("0"),
+                              ],
+                            ),
                           ),
-                          SizedBox(height: 18.0),
-                          Column(
-                            children: <Widget>[
-                              Divider(
-                                thickness: 2,
-                              ),
-                              Card(
-                                child: ListTile(
-                                  title: Text("Email"),
-                                  subtitle: Text(widget.user.email),
-                                  leading: Icon(Icons.email),
-                                ),
-                              ),
-                              Card(
-                                child: ListTile(
-                                  title: Text("City"),
-                                  subtitle: Text(widget.user.city),
-                                  leading: Icon(Icons.location_city),
-                                ),
-                              ),
-                              Card(
-                                child: ListTile(
-                                  title: Text("Birth Day"),
-                                  subtitle: Text(Util.convertDateToString(
-                                      widget.user.birthDay)),
-                                  leading: Icon(Icons.calendar_today),
-                                ),
-                              ),
-                              Card(
-                                child: ListTile(
-                                  title: Text("Rank "),
-                                  subtitle: new StarDisplay(
-                                    value: widget.user.rank.toInt(),
-                                  ),
-                                  leading: Icon(Icons.star),
-                                ),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text("Comments"),
+                                Text("0"),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text("Favourites"),
+                                Text("0"),
+                              ],
+                            ),
                           ),
                         ],
+                      ), */
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                Divider(
+                  thickness: 2,
+                ),
+                SizedBox(height: 20.0),
+                Column(
+                  children: <Widget>[
+                    Card(
+                      margin: EdgeInsets.all(10),
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          widget.user.email,
+                          style: GoogleFonts.getFont(
+                            'Source Code Pro',
+                            textStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                                fontSize: 13),
+                          ),
+                        ),
+                        leading: Icon(
+                          Icons.email,
+                          color: Colors.blue[300],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      margin: EdgeInsets.all(10),
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          widget.user.city,
+                          style: GoogleFonts.getFont(
+                            'Source Code Pro',
+                            textStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                                fontSize: 13),
+                          ),
+                        ),
+                        leading: Icon(
+                          Icons.location_city,
+                          color: Colors.blue[300],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      margin: EdgeInsets.all(10),
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          Util.convertDateToString(widget.user.birthDay),
+                          style: GoogleFonts.getFont(
+                            'Source Code Pro',
+                            textStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                                fontSize: 13),
+                          ),
+                        ),
+                        leading: Icon(
+                          Icons.calendar_today,
+                          color: Colors.blue[300],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      margin: EdgeInsets.all(10),
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: ListTile(
+                        title: new StarDisplay(
+                          value: widget.user.rank.toInt(),
+                        ),
+                        leading: Icon(
+                          Icons.star,
+                          color: Colors.blue[300],
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
-      bottomNavigationBar: buildButton(context),
-    );
-  }
-
-  Widget buildButton(context) {
-    return GestureDetector(
-      onTap: null,
-      child: Container(
-        height: 50,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.blue,
-              Colors.blue[300],
-            ],
-          ),
-        ),
-        child: Center(
-          child: Text(
-            "Edit profil".toUpperCase(),
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ),
