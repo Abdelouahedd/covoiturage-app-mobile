@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       body: Container(
         decoration: new BoxDecoration(
-          color: Colors.blue.withOpacity(0.2),
+          color: Colors.blue.withOpacity(0.12),
         ),
         height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
@@ -49,10 +49,10 @@ class _ProfilePageState extends State<ProfilePage> {
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(18.0),
-                  margin: EdgeInsets.only(top: 2.0),
+                  margin: EdgeInsets.only(top: 15.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(5.0),
+                    borderRadius: BorderRadius.circular(25.0),
                   ),
                   child: Column(
                     children: [
@@ -111,75 +111,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 20.0),
                 Column(
                   children: <Widget>[
-                    Card(
-                      margin: EdgeInsets.all(10),
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          widget.user.email,
-                          style: GoogleFonts.getFont(
-                            'Source Code Pro',
-                            textStyle: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54,
-                                fontSize: 13),
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.email,
-                          color: Colors.blue[300],
-                        ),
-                      ),
-                    ),
-                    Card(
-                      margin: EdgeInsets.all(10),
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          widget.user.city,
-                          style: GoogleFonts.getFont(
-                            'Source Code Pro',
-                            textStyle: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54,
-                                fontSize: 13),
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.location_city,
-                          color: Colors.blue[300],
-                        ),
-                      ),
-                    ),
-                    Card(
-                      margin: EdgeInsets.all(10),
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          Util.convertDateToString(widget.user.birthDay),
-                          style: GoogleFonts.getFont(
-                            'Source Code Pro',
-                            textStyle: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54,
-                                fontSize: 13),
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.calendar_today,
-                          color: Colors.blue[300],
-                        ),
-                      ),
-                    ),
+                    _buildCardWidget(widget.user.email, Icons.email),
+                    _buildCardWidget(widget.user.city, Icons.location_city),
+                    _buildCardWidget(
+                        Util.convertDateToString(widget.user.birthDay),
+                        Icons.calendar_today),
                     Card(
                       margin: EdgeInsets.all(10),
                       elevation: 8,
@@ -201,6 +137,32 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardWidget(dynamic title, IconData icon) {
+    return Card(
+      margin: EdgeInsets.all(10),
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: ListTile(
+        title: Text(
+          title,
+          style: GoogleFonts.getFont(
+            'Source Code Pro',
+            textStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
+                fontSize: 13),
+          ),
+        ),
+        leading: Icon(
+          icon,
+          color: Colors.blue[300],
         ),
       ),
     );
