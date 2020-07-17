@@ -1,3 +1,7 @@
+import 'package:covoiturage_app/contollers/UserSession.dart';
+import 'package:covoiturage_app/models/User.dart';
+import 'package:covoiturage_app/screens/Profile.dart';
+import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -6,21 +10,21 @@ class Settings extends StatefulWidget {
   _SettingsState createState() => _SettingsState();
 }
 
-class _SettingsState extends State<Settings>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+class _SettingsState extends State<Settings> {
   bool _lights = false;
-
+  bool _sendNotification = false;
+  UserSession userSession;
+  User user;
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    userSession = new UserSession();
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userSession.getCurrentUser().then((value) => user = value);
   }
 
   @override
@@ -49,31 +53,34 @@ class _SettingsState extends State<Settings>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ListTile(
-                      title: Text("Abdelouahed"),
+                      title: Text(user.username ?? ''),
                       leading: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 30,
-                        backgroundImage: AssetImage("assets/images/user.png"),
+                        backgroundImage: user == null
+                            ? AssetImage("assets/images/user.png")
+                            : NetworkImage(user.profileImg),
                       ),
                     ),
                     Divider(thickness: 1),
                     FlatButton(
-                        onPressed: () => print("Hello"),
+                        onPressed: () => Navigator.push(
+                              context,
+                              SlideRightRoute(page: ProfilePage(user: user)),
+                            ),
                         child: Text("Show profil"))
                   ]),
             ),
           ),
           Align(
-            child: Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Text(
-                  "GENERAL SETTINGS".toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w400,
-                  ),
-                )),
-            alignment: Alignment.centerLeft,
+            child: Text(
+              "GENERAL SETTINGS".toUpperCase(),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            alignment: Alignment.center,
           ),
           Card(
             margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 20),
@@ -106,10 +113,10 @@ class _SettingsState extends State<Settings>
                     Divider(),
                     SwitchListTile(
                       title: Text("Notification"),
-                      value: _lights,
+                      value: _sendNotification,
                       onChanged: (bool value) {
                         setState(() {
-                          _lights = value;
+                          _sendNotification = value;
                         });
                       },
                       secondary: const Icon(Icons.notifications),
