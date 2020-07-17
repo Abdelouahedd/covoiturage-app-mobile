@@ -5,6 +5,7 @@ import 'package:covoiturage_app/screens/Messages.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
 import 'package:covoiturage_app/screens/SignIn.dart';
 import 'package:covoiturage_app/screens/Notification.dart';
+import 'package:covoiturage_app/screens/settings.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 
@@ -136,7 +137,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     _buildDivider(),
                     _buildRow(Icons.email, "Contact us"),
                     _buildDivider(),
-                    _buildRow(Icons.settings, "Settings"),
+                    _buildRow(Icons.settings, "Settings",
+                        go: () => Navigator.push(
+                            context, SlideRightRoute(page: new Settings()))),
                     _buildDivider(),
                     _buildRow(Icons.arrow_back, "Log out", go: () => signOut()),
                     _buildDivider(),
