@@ -1,6 +1,7 @@
 import 'package:covoiturage_app/contollers/UserSession.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
+import 'package:covoiturage_app/widgets/NavigationDrawer.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,14 +20,15 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     userSession = new UserSession();
-    userSession.getCurrentUser().then((value) => user = value);
+    userSession
+        .getCurrentUser()
+        .then((value) => this.setState(() => user = value));
   }
 
- 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFE1F5FE),
+      backgroundColor: Colors.blue.withOpacity(0.12),
       appBar: PreferredSize(
         child: AppBar(),
         preferredSize: Size.fromHeight(40),
@@ -146,6 +148,7 @@ class _SettingsState extends State<Settings> {
           ],
         ),
       ),
+      drawer: NavigationDrawer(),
     );
   }
 }

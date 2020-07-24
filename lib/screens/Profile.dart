@@ -1,5 +1,6 @@
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/services/Util.dart';
+import 'package:covoiturage_app/widgets/NavigationDrawer.dart';
 import 'package:covoiturage_app/widgets/StarDisplay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -139,6 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
+      drawer: NavigationDrawer(),
     );
   }
 

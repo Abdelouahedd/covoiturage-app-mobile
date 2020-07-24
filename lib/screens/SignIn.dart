@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:covoiturage_app/contollers/UserController.dart';
 import 'package:covoiturage_app/contollers/UserSession.dart';
 import 'package:covoiturage_app/screens/ControllerScreens.dart';
+import 'package:covoiturage_app/screens/Home.dart';
 import 'package:covoiturage_app/screens/SignUp.dart';
 import 'package:covoiturage_app/services/Util.dart';
 import 'package:covoiturage_app/widgets/CustomTextField.dart';
@@ -83,7 +84,7 @@ class _SignInState extends State<SignIn> {
                       print("User authentified"),
                       sleep(new Duration(milliseconds: 5)),
                       Navigator.push(
-                          context, SlideRightRoute(page: ControllerScreens()))
+                          context, SlideRightRoute(page: Home()))
                     }),
               }
           });

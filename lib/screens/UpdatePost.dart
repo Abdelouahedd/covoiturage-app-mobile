@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:covoiturage_app/contollers/PostController.dart';
-import 'package:covoiturage_app/contollers/UserSession.dart';
 import 'package:covoiturage_app/models/Post.dart';
-import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/services/Util.dart';
 import 'package:covoiturage_app/widgets/CustomTextField.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
@@ -12,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class UpdatePost extends StatefulWidget {
-  Post post;
+  final Post post;
 
   UpdatePost({Key key, this.post}) : super(key: key);
 

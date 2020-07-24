@@ -4,14 +4,18 @@ import 'package:covoiturage_app/contollers/PostController.dart';
 import 'package:covoiturage_app/contollers/UserSession.dart';
 import 'package:covoiturage_app/models/Post.dart';
 import 'package:covoiturage_app/models/User.dart';
+import 'package:covoiturage_app/models/navItems.dart';
 import 'package:covoiturage_app/services/Util.dart';
 import 'package:covoiturage_app/widgets/CustomTextField.dart';
 import 'package:covoiturage_app/widgets/MyButton.dart';
+import 'package:covoiturage_app/widgets/NavigationDrawer.dart';
 import 'package:covoiturage_app/widgets/ShowSnackBar.dart';
+import 'package:covoiturage_app/widgets/TitledBottomNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'package:provider/provider.dart';
 
 enum TypeClient { Passager, Conducteur }
 
@@ -153,158 +157,187 @@ class _TrajetState extends State<Trajet> {
     }
   }
 
+  var defaultSize;
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    var _mediaQueryData = MediaQuery.of(context);
+    var screenWidth = _mediaQueryData.size.width;
+    var screenHeight = _mediaQueryData.size.height;
+    var orientation = _mediaQueryData.orientation;
+    defaultSize = orientation == Orientation.landscape
+        ? screenHeight * 0.024
+        : screenWidth * 0.024;
+  }
+
   @override
   Widget build(BuildContext context) {
     // final Size size = MediaQuery.of(context).size;
 
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          child: Container(
-            decoration: new BoxDecoration(),
-            child: Form(
-              key: _formKey,
-              autovalidate: _autoValidate,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: RadioListTile<TypeClient>(
-                            autofocus: true,
-                            activeColor: Colors.blueAccent,
-                            title: Text("Passager"),
-                            value: TypeClient.Passager,
-                            groupValue: _client,
-                            onChanged: (TypeClient typeClient) =>
-                                this.setState(() {
-                                  _client = typeClient;
-                                })),
-                      ),
-                      Flexible(
-                        child: RadioListTile<TypeClient>(
-                            activeColor: Colors.blueAccent,
-                            title: Text("Conducteur"),
-                            value: TypeClient.Conducteur,
-                            groupValue: _client,
-                            onChanged: (TypeClient typeClient) =>
-                                this.setState(() {
-                                  _client = typeClient;
-                                })),
-                      ),
-                    ],
-                  ),
-                  new CustomTextField(
-                    icon: Icon(Icons.time_to_leave),
-                    hint: "From ",
-                    validator: (v) {
-                      if (v.length == 0) return "* require";
-                    },
-                    onSaved: (newValue) => from = newValue,
-                  ),
-                  new CustomTextField(
-                    icon: Icon(Icons.assistant_photo),
-                    hint: "To ",
-                    validator: (v) {
-                      if (v.length == 0) return "* require";
-                    },
-                    onSaved: (newValue) => to = newValue,
-                  ),
-                  new CustomTextField(
-                    textEditingController: _time,
-                    read: true,
-                    icon: Icon(Icons.access_time),
-                    hint: "Time ",
-                    tap: () => this.selectedTime(context),
-                    validator: (b) {
-                      if (b.length == 0) return "* require";
-                    },
-                  ),
-                  new CustomTextField(
-                    textEditingController: _date,
-                    read: true,
-                    icon: Icon(Icons.data_usage),
-                    hint: "Date ",
-                    tap: () => _selectDate(context),
-                    validator: (b) {
-                      if (b.length == 0) return "* require";
-                    },
-                  ),
-                  new CustomTextField(
-                    onSaved: (val) => nbrPlaces = int.parse(val),
-                    icon: Icon(Icons.format_list_numbered),
-                    hint: "Number of place ",
-                    validator: (b) {
-                      if (b.length == 0) return "* require";
-                    },
-                  ),
-                  _client == TypeClient.Passager
-                      ? Container()
-                      : new CustomTextField(
-                          icon: Icon(Icons.monetization_on),
-                          hint: "Price ",
-                          validator: (v) {
-                            if (v.length == 0) return "* require";
-                          },
-                          onSaved: (newValue) => price = newValue,
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () => null,
+        ),
+        // On Android it's false by default
+        centerTitle: true,
+        title: Consumer<NavItems>(
+          builder: (context, value, child) => Text(value.items[1].title),
+        ),
+      ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              decoration: new BoxDecoration(),
+              child: Form(
+                key: _formKey,
+                autovalidate: _autoValidate,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: RadioListTile<TypeClient>(
+                              autofocus: true,
+                              activeColor: Colors.blueAccent,
+                              title: Text("Passager"),
+                              value: TypeClient.Passager,
+                              groupValue: _client,
+                              onChanged: (TypeClient typeClient) =>
+                                  this.setState(() {
+                                    _client = typeClient;
+                                  })),
                         ),
-                  new SizedBox(
-                    height: 22,
-                  ),
-                  MyButton("Post", 2, submitPost),
+                        Flexible(
+                          child: RadioListTile<TypeClient>(
+                              activeColor: Colors.blueAccent,
+                              title: Text("Conducteur"),
+                              value: TypeClient.Conducteur,
+                              groupValue: _client,
+                              onChanged: (TypeClient typeClient) =>
+                                  this.setState(() {
+                                    _client = typeClient;
+                                  })),
+                        ),
+                      ],
+                    ),
+                    new CustomTextField(
+                      icon: Icon(Icons.time_to_leave),
+                      hint: "From ",
+                      validator: (v) {
+                        if (v.length == 0) return "* require";
+                      },
+                      onSaved: (newValue) => from = newValue,
+                    ),
+                    new CustomTextField(
+                      icon: Icon(Icons.assistant_photo),
+                      hint: "To ",
+                      validator: (v) {
+                        if (v.length == 0) return "* require";
+                      },
+                      onSaved: (newValue) => to = newValue,
+                    ),
+                    new CustomTextField(
+                      textEditingController: _time,
+                      read: true,
+                      icon: Icon(Icons.access_time),
+                      hint: "Time ",
+                      tap: () => this.selectedTime(context),
+                      validator: (b) {
+                        if (b.length == 0) return "* require";
+                      },
+                    ),
+                    new CustomTextField(
+                      textEditingController: _date,
+                      read: true,
+                      icon: Icon(Icons.data_usage),
+                      hint: "Date ",
+                      tap: () => _selectDate(context),
+                      validator: (b) {
+                        if (b.length == 0) return "* require";
+                      },
+                    ),
+                    new CustomTextField(
+                      onSaved: (val) => nbrPlaces = int.parse(val),
+                      icon: Icon(Icons.format_list_numbered),
+                      hint: "Number of place ",
+                      validator: (b) {
+                        if (b.length == 0) return "* require";
+                      },
+                    ),
+                    _client == TypeClient.Passager
+                        ? Container()
+                        : new CustomTextField(
+                            icon: Icon(Icons.monetization_on),
+                            hint: "Price ",
+                            validator: (v) {
+                              if (v.length == 0) return "* require";
+                            },
+                            onSaved: (newValue) => price = newValue,
+                          ),
+                    new SizedBox(
+                      height: 22,
+                    ),
+                    MyButton("Post", 2, submitPost),
 
-                  // Wrap(
-                  //   spacing: 8.0,
-                  //   runSpacing: 10,
-                  //   crossAxisAlignment: WrapCrossAlignment.start,
-                  //   alignment: WrapAlignment.spaceEvenly,
-                  //   children: [
-                  //     _image == null
-                  //         ? Container(
-                  //             width: size.width / 3,
-                  //             child: Row(
-                  //               children: [
-                  //                 new IconButton(
-                  //                   icon: new Icon(Icons.add_photo_alternate),
-                  //                   onPressed: getImage,
-                  //                   color: new Color(0xff203152),
-                  //                 ),
-                  //                 new IconButton(
-                  //                   icon: new Icon(Icons.add_a_photo),
-                  //                   onPressed: getImageFromCamera,
-                  //                   color: new Color(0xff203152),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           )
-                  //         : Container(
-                  //             width: size.width / 3,
-                  //             child: Text(
-                  //               _image.absolute.path,
-                  //               softWrap: true,
-                  //               overflow: TextOverflow.ellipsis,
-                  //             )),
-                  //     // new SizedBox(width: 180,),
-                  //   ],
-                  // ),
-                ],
+                    // Wrap(
+                    //   spacing: 8.0,
+                    //   runSpacing: 10,
+                    //   crossAxisAlignment: WrapCrossAlignment.start,
+                    //   alignment: WrapAlignment.spaceEvenly,
+                    //   children: [
+                    //     _image == null
+                    //         ? Container(
+                    //             width: size.width / 3,
+                    //             child: Row(
+                    //               children: [
+                    //                 new IconButton(
+                    //                   icon: new Icon(Icons.add_photo_alternate),
+                    //                   onPressed: getImage,
+                    //                   color: new Color(0xff203152),
+                    //                 ),
+                    //                 new IconButton(
+                    //                   icon: new Icon(Icons.add_a_photo),
+                    //                   onPressed: getImageFromCamera,
+                    //                   color: new Color(0xff203152),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           )
+                    //         : Container(
+                    //             width: size.width / 3,
+                    //             child: Text(
+                    //               _image.absolute.path,
+                    //               softWrap: true,
+                    //               overflow: TextOverflow.ellipsis,
+                    //             )),
+                    //     // new SizedBox(width: 180,),
+                    //   ],
+                    // ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        Positioned(
-          child: isLoading
-              ? Container(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).primaryColor)),
-                  ),
-                  color: Colors.white.withOpacity(0.8),
-                )
-              : Container(),
-        ),
-      ],
+          Positioned(
+            child: isLoading
+                ? Container(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor)),
+                    ),
+                    color: Colors.white.withOpacity(0.8),
+                  )
+                : Container(),
+          ),
+        ],
+      ),
+      bottomNavigationBar: TitledBottomNavigationBar(),
+      drawer: NavigationDrawer(),
     );
   }
 }

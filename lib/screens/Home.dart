@@ -1,14 +1,18 @@
 import 'package:covoiturage_app/contollers/PostController.dart';
 import 'package:covoiturage_app/models/Post.dart';
+import 'package:covoiturage_app/models/navItems.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
 import 'package:covoiturage_app/screens/UpdatePost.dart';
+import 'package:covoiturage_app/widgets/NavigationDrawer.dart';
 import 'package:covoiturage_app/widgets/SearchField.dart';
 import 'package:covoiturage_app/widgets/ShowSnackBar.dart';
+import 'package:covoiturage_app/widgets/TitledBottomNavigationBar.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:covoiturage_app/services/Util.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -111,6 +115,8 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    var titleProvider = Provider.of<NavItems>(context);
+
     if (_searchText.length > 0) {
       List<Post> tempList = new List();
       for (int i = 0; i < filterPosts.length; i++) {
@@ -123,30 +129,43 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
         filterPosts = tempList;
       });
     }
-    return isLoading
-        ? Container(
-            child: Center(
-              child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor)),
-            ),
-            color: Colors.white.withOpacity(0.8),
-          )
-        : Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new SearchField(_filter, _changeStateOfTextField),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(titleProvider.items[0].title),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () => null,
+        ),
+      ),
+      body: isLoading
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor)),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filterPosts.length,
-                  itemBuilder: (context, index) =>
-                      this.buildCardPost(filterPosts[index]),
+              color: Colors.white.withOpacity(0.8),
+            )
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new SearchField(_filter, _changeStateOfTextField),
                 ),
-              ),
-            ],
-          );
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: filterPosts.length,
+                    itemBuilder: (context, index) =>
+                        this.buildCardPost(filterPosts[index]),
+                  ),
+                ),
+              ],
+            ),
+      bottomNavigationBar: TitledBottomNavigationBar(),
+      drawer: NavigationDrawer(),
+    );
   }
 
   Widget buildCardPost(Post p) {

@@ -1,3 +1,4 @@
+import 'package:covoiturage_app/helper/size_config.dart';
 import 'package:flutter/material.dart';
 
 class ShowSnackBar extends StatelessWidget {
@@ -8,7 +9,7 @@ class ShowSnackBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      width: MediaQuery.of(context).size.width,
+      width: SizeConfig.screenWidth,
       decoration: new BoxDecoration(
         color: color,
         borderRadius: BorderRadius.only(

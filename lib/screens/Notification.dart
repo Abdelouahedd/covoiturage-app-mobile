@@ -1,3 +1,4 @@
+import 'package:covoiturage_app/widgets/NavigationDrawer.dart';
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -95,6 +96,7 @@ class _NotificationState extends State<NotificationScreen> {
           );
         },
       ),
+      drawer: NavigationDrawer(),
     );
   }
 }

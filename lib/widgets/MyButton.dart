@@ -1,3 +1,4 @@
+import 'package:covoiturage_app/helper/size_config.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -14,7 +15,7 @@ class MyButton extends StatelessWidget {
       onTap: click,
       child: Container(
         height: 45,
-        width: MediaQuery.of(context).size.width / withSize,
+        width: SizeConfig.screenWidth / withSize,
         decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [

@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:covoiturage_app/contollers/UserController.dart';
+import 'package:covoiturage_app/models/navItems.dart';
 import 'package:covoiturage_app/screens/ControllerScreens.dart';
+import 'package:covoiturage_app/screens/Home.dart';
 import 'package:covoiturage_app/screens/SignIn.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
@@ -64,31 +66,31 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void goToHomePage() {
-    Navigator.pushReplacement(
-        context, SlideRightRoute(page: ControllerScreens()));
+    Navigator.pushReplacement(context, SlideRightRoute(page: Home()));
   }
 
   @override
   Widget build(cnx) {
     return Scaffold(
-        body: Container(
-      decoration: new BoxDecoration(color: Colors.white10),
-      child: Center(
-        child: Opacity(
-          opacity: currentOpacity,
-          child: new Container(
-            width: MediaQuery.of(context).size.width / 2,
-            alignment: Alignment.center,
-            decoration: new BoxDecoration(
-              image: new DecorationImage(
-                image: new ExactAssetImage('assets/images/logodinimak.png',
-                    scale: 0.5),
-                fit: logo,
+      body: Container(
+        decoration: new BoxDecoration(color: Colors.white10),
+        child: Center(
+          child: Opacity(
+            opacity: currentOpacity,
+            child: new Container(
+              width: MediaQuery.of(context).size.width / 2,
+              alignment: Alignment.center,
+              decoration: new BoxDecoration(
+                image: new DecorationImage(
+                  image: new ExactAssetImage('assets/images/logodinimak.png',
+                      scale: 0.5),
+                  fit: logo,
+                ),
               ),
             ),
           ),
         ),
       ),
-    ));
+    );
   }
 }

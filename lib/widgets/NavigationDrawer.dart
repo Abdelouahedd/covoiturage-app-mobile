@@ -1,5 +1,6 @@
 import 'package:covoiturage_app/contollers/UserController.dart';
 import 'package:covoiturage_app/contollers/UserSession.dart';
+import 'package:covoiturage_app/helper/size_config.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/screens/Messages.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
@@ -10,33 +11,23 @@ import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 
 class NavigationDrawer extends StatefulWidget {
-  final User user;
-  NavigationDrawer({this.user});
+  NavigationDrawer();
   @override
   _NavigationDrawerState createState() => _NavigationDrawerState();
 }
 
 class _NavigationDrawerState extends State<NavigationDrawer> {
-  String image;
-  UserController userController = new UserController();
-  UserSession userSession = new UserSession();
+  UserController userController;
+  UserSession userSession;
   User user;
   @override
   void initState() {
     super.initState();
-    image =
-        widget.user == null ? 'assets/images/user.png' : widget.user.profileImg;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    userSession.getCurrentUser().then((value) => {
-          user = value,
-          image = user.profileImg == null
-              ? 'assets/images/user.png'
-              : user.profileImg,
-        });
+    userController = new UserController();
+    userSession = new UserSession();
+    userSession
+        .getCurrentUser()
+        .then((value) => this.setState(() => user = value));
   }
 
   void signOut() async {
@@ -62,12 +53,12 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height,
+      height: SizeConfig.screenHeight,
       decoration: BoxDecoration(
         color: Colors.blueGrey[100],
         boxShadow: [BoxShadow(color: Colors.black45)],
       ),
-      width: MediaQuery.of(context).size.width / 1.2,
+      width: SizeConfig.screenWidth / 1.2,
       child: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -95,21 +86,21 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 40,
-                  backgroundImage: widget.user == null
-                      ? AssetImage(image)
-                      : NetworkImage(widget.user.profileImg),
+                  backgroundImage: this.user == null
+                      ? AssetImage('assets/images/user.png')
+                      : NetworkImage(this.user.profileImg),
                 ),
               ),
               SizedBox(height: 5.0),
               Text(
-                widget.user == null ? '' : widget.user.username,
+                this.user == null ? '' : this.user.username,
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600),
               ),
               Text(
-                widget.user == null ? ' ' : widget.user.email,
+                this.user == null ? ' ' : this.user.email,
                 style: TextStyle(color: Colors.grey.shade800, fontSize: 16.0),
               ),
               SizedBox(height: 30.0),

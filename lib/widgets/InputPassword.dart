@@ -1,7 +1,8 @@
+import 'package:covoiturage_app/helper/size_config.dart';
 import 'package:flutter/material.dart';
 
 class InputPassword extends StatefulWidget {
-  InputPassword(this.editPasswordController,this.margin);
+  InputPassword(this.editPasswordController, this.margin);
   bool shwoPassword = true;
   double margin;
   TextEditingController editPasswordController;
@@ -13,7 +14,7 @@ class _InputPasswordState extends State<InputPassword> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: MediaQuery.of(context).size.width / 1.2,
+        width: SizeConfig.screenWidth / 1.2,
         height: 45,
         margin: EdgeInsets.only(top: widget.margin),
         padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
@@ -26,7 +27,9 @@ class _InputPasswordState extends State<InputPassword> {
           obscureText: widget.shwoPassword,
           keyboardType: TextInputType.visiblePassword,
           autocorrect: true,
-          style: TextStyle(color:Colors.blue,),
+          style: TextStyle(
+            color: Colors.blue,
+          ),
           decoration: InputDecoration(
             border: InputBorder.none,
             icon: Icon(
