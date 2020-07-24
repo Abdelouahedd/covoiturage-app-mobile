@@ -28,7 +28,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.withOpacity(0.12),
+      backgroundColor: Colors.white.withOpacity(0.90),
       appBar: PreferredSize(
         child: AppBar(),
         preferredSize: Size.fromHeight(40),

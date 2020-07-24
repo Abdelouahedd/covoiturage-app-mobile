@@ -23,9 +23,9 @@ class _FriendsState extends State<Friends> {
   void initState() {
     super.initState();
     _userController = new UserController();
-    _userController.getUsers().then((value) => {
-          this.setState(() => {users = value, isLoading = false}),
-        });
+    _userController.getUsers().then(
+          (value) => this.setState(() => {users = value, isLoading = false}),
+        );
   }
 
   @override
