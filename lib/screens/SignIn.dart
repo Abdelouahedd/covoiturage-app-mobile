@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:covoiturage_app/contollers/UserController.dart';
 import 'package:covoiturage_app/contollers/UserSession.dart';
-import 'package:covoiturage_app/screens/ControllerScreens.dart';
 import 'package:covoiturage_app/screens/Home.dart';
 import 'package:covoiturage_app/screens/SignUp.dart';
 import 'package:covoiturage_app/services/Util.dart';
@@ -83,8 +82,7 @@ class _SignInState extends State<SignIn> {
                       }),
                       print("User authentified"),
                       sleep(new Duration(milliseconds: 5)),
-                      Navigator.push(
-                          context, SlideRightRoute(page: Home()))
+                      Navigator.push(context, SlideRightRoute(page: Home()))
                     }),
               }
           });
@@ -173,7 +171,6 @@ class _SignInState extends State<SignIn> {
                                 if (v.length == 0) return "* require";
                                 if (!regex.hasMatch(v))
                                   return 'Enter Valid Email';
-                                
                               },
                               onSaved: (newValue) => {
                                 _email = newValue,
@@ -190,7 +187,6 @@ class _SignInState extends State<SignIn> {
                                 if (v.length == 0) return "* require";
                                 if (v.length < 2)
                                   return 'Password can\'t be less then 6 characteres  ';
-                                
                               },
                               onSaved: (newValue) => _password = newValue,
                             ),

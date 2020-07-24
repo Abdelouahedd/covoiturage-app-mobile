@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:covoiturage_app/contollers/UserController.dart';
-import 'package:covoiturage_app/models/navItems.dart';
-import 'package:covoiturage_app/screens/ControllerScreens.dart';
 import 'package:covoiturage_app/screens/Home.dart';
 import 'package:covoiturage_app/screens/SignIn.dart';
 import 'package:covoiturage_app/widgets/animatedRoute.dart';

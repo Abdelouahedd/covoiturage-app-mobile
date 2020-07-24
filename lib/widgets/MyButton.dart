@@ -6,12 +6,11 @@ class MyButton extends StatelessWidget {
   MyButton(this.name, this.withSize, this.click);
   final String name;
   final double withSize;
-  Function click;
+  final Function click;
 
   @override
   Widget build(BuildContext context) {
-    return 
-    GestureDetector(
+    return GestureDetector(
       onTap: click,
       child: Container(
         height: 45,

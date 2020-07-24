@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:covoiturage_app/contollers/PostController.dart';
 import 'package:covoiturage_app/contollers/UserSession.dart';
+import 'package:covoiturage_app/helper/size_config.dart';
 import 'package:covoiturage_app/models/Post.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/models/navItems.dart';
@@ -26,6 +27,7 @@ class Trajet extends StatefulWidget {
 
 class _TrajetState extends State<Trajet> {
   TypeClient _client = TypeClient.Conducteur;
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _autoValidate = false;
@@ -111,77 +113,69 @@ class _TrajetState extends State<Trajet> {
   void submitPost() async {
     if (validateForm()) {
       _formKey.currentState.save();
-      Post post = new Post(
-          id: uuid.v1(),
-          date: Util.convertToDateTime(date),
-          nbrPlaces: nbrPlaces,
-          from: from,
-          price: price,
-          to: to,
-          time: Util.convertToTime(time),
-          user: currentUser);
+      Post post = getPostFromInputs();
       _postController.setPost(post);
       bool result = false;
-      this.setState(() {
-        isLoading = true;
-      });
+      this.setState(() => isLoading = true);
       await _postController.createPost().then((value) => result = value);
-      this.setState(() {
-        isLoading = false;
-      });
-      result == true
-          ? {
-              Future.delayed(new Duration(milliseconds: 5)).then((value) => {
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        content: new ShowSnackBar(
-                          color: Colors.green,
-                          msg: "Post created sucessefully",
-                        ),
-                      ),
-                    ),
-                    _formKey.currentState.reset(),
-                  }),
-              // Navigator.pushReplacement(context, ScaleRoute(page: ())),
-            }
-          : {
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: new ShowSnackBar(
-                    color: Colors.red,
-                    msg: "Probleme while Creating a new Post",
-                  ),
-                ),
-              )
-            };
+      this.setState(() => isLoading = false);
+      result == true ? sucessMessage() : problemMessage();
     }
   }
 
-  var defaultSize;
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    var _mediaQueryData = MediaQuery.of(context);
-    var screenWidth = _mediaQueryData.size.width;
-    var screenHeight = _mediaQueryData.size.height;
-    var orientation = _mediaQueryData.orientation;
-    defaultSize = orientation == Orientation.landscape
-        ? screenHeight * 0.024
-        : screenWidth * 0.024;
+  Set<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>>
+      problemMessage() {
+    return {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: new ShowSnackBar(
+            color: Colors.red,
+            msg: "Probleme while Creating a new Post",
+          ),
+        ),
+      )
+    };
+  }
+
+  Set<Future<Set<void>>> sucessMessage() {
+    return {
+      Future.delayed(new Duration(milliseconds: 5)).then((value) => {
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: new ShowSnackBar(
+                  color: Colors.green,
+                  msg: "Post created sucessefully",
+                ),
+              ),
+            ),
+            _formKey.currentState.reset(),
+          }),
+    };
+  }
+
+  Post getPostFromInputs() {
+    Post post = new Post(
+        id: uuid.v1(),
+        date: Util.convertToDateTime(date),
+        nbrPlaces: nbrPlaces,
+        from: from,
+        price: price,
+        to: to,
+        time: Util.convertToTime(time),
+        user: currentUser);
+    return post;
   }
 
   @override
   Widget build(BuildContext context) {
-    // final Size size = MediaQuery.of(context).size;
-
+    SizeConfig().init(context);
     return Scaffold(
+      key: _globalKey,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.menu),
-          onPressed: () => null,
+          onPressed: () => this._globalKey.currentState.openDrawer(),
         ),
-        // On Android it's false by default
         centerTitle: true,
         title: Consumer<NavItems>(
           builder: (context, value, child) => Text(value.items[1].title),

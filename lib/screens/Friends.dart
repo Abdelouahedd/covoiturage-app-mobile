@@ -1,4 +1,5 @@
 import 'package:covoiturage_app/contollers/UserController.dart';
+import 'package:covoiturage_app/helper/size_config.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/models/navItems.dart';
 import 'package:covoiturage_app/widgets/NavigationDrawer.dart';
@@ -13,6 +14,8 @@ class Friends extends StatefulWidget {
 }
 
 class _FriendsState extends State<Friends> {
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
   List<User> users = new List();
   UserController _userController;
   bool isLoading = true;
@@ -21,18 +24,20 @@ class _FriendsState extends State<Friends> {
     super.initState();
     _userController = new UserController();
     _userController.getUsers().then((value) => {
-          users = value,
-          this.setState(() => isLoading = false),
+          this.setState(() => {users = value, isLoading = false}),
         });
   }
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+
     return Scaffold(
+      key: _globalKey,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.menu),
-          onPressed: () => null,
+          onPressed: () => this._globalKey.currentState.openDrawer(),
         ),
         centerTitle: true,
         title: Consumer<NavItems>(

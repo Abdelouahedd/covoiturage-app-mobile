@@ -1,4 +1,5 @@
 import 'package:covoiturage_app/contollers/PostController.dart';
+import 'package:covoiturage_app/helper/size_config.dart';
 import 'package:covoiturage_app/models/Post.dart';
 import 'package:covoiturage_app/models/navItems.dart';
 import 'package:covoiturage_app/screens/Profile.dart';
@@ -20,6 +21,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomePageState extends State<Home> with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   final PostController postController = new PostController();
   final TextEditingController _filter = new TextEditingController();
   String _searchText = "";
@@ -80,41 +82,46 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
   void delete(Post p) async {
     Navigator.pop(context);
     bool result = false;
-    this.setState(() {
-      isLoading = true;
-    });
+    this.setState(() => isLoading = true);
     await postController.deletePost(p).then((value) => result = value);
     this.posts.remove(p);
-    this.setState(() {
-      isLoading = false;
-    });
-    result == true
-        ? {
-            Future.delayed(new Duration(milliseconds: 1)).then((value) => {
-                  Scaffold.of(context).showSnackBar(
-                    SnackBar(
-                      content: new ShowSnackBar(
-                        color: Colors.green,
-                        msg: "Post deleted sucessefully",
-                      ),
-                    ),
-                  ),
-                }),
-          }
-        : {
+    this.setState(() => isLoading = false);
+    result == true ? succesDeletingPost() : problemDeletingPost();
+  }
+
+  Set<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>>
+      problemDeletingPost() {
+    return {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: new ShowSnackBar(
+            color: Colors.red,
+            msg: "Probleme while deleting your post",
+          ),
+        ),
+      )
+    };
+  }
+
+  Set<Future<Set<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>>>>
+      succesDeletingPost() {
+    return {
+      Future.delayed(new Duration(milliseconds: 1)).then((value) => {
             Scaffold.of(context).showSnackBar(
               SnackBar(
                 content: new ShowSnackBar(
-                  color: Colors.red,
-                  msg: "Probleme while deleting your post",
+                  color: Colors.green,
+                  msg: "Post deleted sucessefully",
                 ),
               ),
-            )
-          };
+            ),
+          }),
+    };
   }
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     var titleProvider = Provider.of<NavItems>(context);
 
     if (_searchText.length > 0) {
@@ -130,13 +137,14 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
       });
     }
     return Scaffold(
+      key: _globalKey,
       appBar: AppBar(
         title: Text(titleProvider.items[0].title),
         automaticallyImplyLeading: false,
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.menu),
-          onPressed: () => null,
+          onPressed: () => this._globalKey.currentState.openDrawer(),
         ),
       ),
       body: isLoading
