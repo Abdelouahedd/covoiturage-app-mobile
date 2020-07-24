@@ -1,4 +1,4 @@
-package com.example.covoiturage_app
+package com.ae.covoiturage_app
 
 import io.flutter.embedding.android.FlutterActivity
 
