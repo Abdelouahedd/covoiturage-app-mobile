@@ -118,7 +118,7 @@ class UserController {
           (value) => users = value.documents
               .map((e) => User.fromJson(e.data))
               .toList()
-              .where((element) => element == currentUser)
+              .where((element) => element.id != currentUser.id)
               .toList(),
         )
         .catchError((onError) => print(

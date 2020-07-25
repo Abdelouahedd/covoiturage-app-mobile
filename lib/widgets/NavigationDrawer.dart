@@ -116,10 +116,20 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                               user: user,
                             )))),
                     _buildDivider(),
-                    _buildRow(Icons.message, "Messages",
-                        showBadge: true,
-                        go: () => Navigator.push(
-                            context, SlideRightRoute(page: Messages()))),
+                    _buildRow(
+                      Icons.message,
+                      "Messages",
+                      showBadge: true,
+                      go: () => Navigator.push(
+                        context,
+                        SlideRightRoute(
+                          page: Chat(
+                            peerId: user.id,
+                            peerAvatar: user.profileImg,
+                          ),
+                        ),
+                      ),
+                    ),
                     _buildDivider(),
                     _buildRow(Icons.notifications, "Notifications",
                         showBadge: true,

@@ -2,9 +2,11 @@ import 'package:covoiturage_app/contollers/UserController.dart';
 import 'package:covoiturage_app/helper/size_config.dart';
 import 'package:covoiturage_app/models/User.dart';
 import 'package:covoiturage_app/models/navItems.dart';
+import 'package:covoiturage_app/screens/Messages.dart';
 import 'package:covoiturage_app/widgets/NavigationDrawer.dart';
 import 'package:covoiturage_app/widgets/StarDisplay.dart';
 import 'package:covoiturage_app/widgets/TitledBottomNavigationBar.dart';
+import 'package:covoiturage_app/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -97,11 +99,20 @@ class _FriendsState extends State<Friends> {
                                 backgroundColor: Colors.white,
                                 radius: 35,
                                 child: IconButton(
-                                    icon: Icon(
-                                      Icons.message,
-                                      color: Colors.blue[200],
+                                  icon: Icon(
+                                    Icons.message,
+                                    color: Colors.blue[200],
+                                  ),
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    SlideRightRoute(
+                                      page: Chat(
+                                        peerId: users[index].id,
+                                        peerAvatar: users[index].profileImg,
+                                      ),
                                     ),
-                                    onPressed: null),
+                                  ),
+                                ),
                               ),
                             ),
                           ],

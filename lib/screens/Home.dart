@@ -92,7 +92,7 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
   Set<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>>
       problemDeletingPost() {
     return {
-      Scaffold.of(context).showSnackBar(
+      _globalKey.currentState.showSnackBar(
         SnackBar(
           content: new ShowSnackBar(
             color: Colors.red,
@@ -107,7 +107,7 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
       succesDeletingPost() {
     return {
       Future.delayed(new Duration(milliseconds: 1)).then((value) => {
-            Scaffold.of(context).showSnackBar(
+            _globalKey.currentState.showSnackBar(
               SnackBar(
                 content: new ShowSnackBar(
                   color: Colors.green,
@@ -226,7 +226,7 @@ class _HomePageState extends State<Home> with TickerProviderStateMixin {
                           ),
                           InkWell(
                             onTap: () {
-                              Scaffold.of(context).showBottomSheet(
+                              _globalKey.currentState.showBottomSheet(
                                 // context: context,
                                 // builder:
                                 (context) {

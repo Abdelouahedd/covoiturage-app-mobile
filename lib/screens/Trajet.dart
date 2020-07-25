@@ -126,7 +126,7 @@ class _TrajetState extends State<Trajet> {
   Set<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>>
       problemMessage() {
     return {
-      Scaffold.of(context).showSnackBar(
+      _globalKey.currentState.showSnackBar(
         SnackBar(
           content: new ShowSnackBar(
             color: Colors.red,
@@ -140,7 +140,7 @@ class _TrajetState extends State<Trajet> {
   Set<Future<Set<void>>> sucessMessage() {
     return {
       Future.delayed(new Duration(milliseconds: 5)).then((value) => {
-            Scaffold.of(context).showSnackBar(
+            _globalKey.currentState.showSnackBar(
               SnackBar(
                 content: new ShowSnackBar(
                   color: Colors.green,

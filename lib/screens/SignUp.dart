@@ -240,11 +240,11 @@ class _SignUpState extends State<SignUp> {
                               icon: Icon(Icons.perm_identity),
                               hint: "Username",
                               validator: (v) {
-                                Pattern pattern = r'(^[A-Za-z0-9]+$)';
-                                RegExp regex = new RegExp(pattern);
+                                // Pattern pattern = r'(^[A-Za-z0-9]+$)';
+                                // RegExp regex = new RegExp(pattern);
                                 if (v.length == 0) return "* require";
-                                if (!regex.hasMatch(v))
-                                  return 'Enter Valid username (just characteres and numbers)';
+                                // if (!regex.hasMatch(v))
+                                //   return 'Enter Valid username (just characteres and numbers)';
                               },
                               onSaved: (newValue) => username = newValue,
                             ),
