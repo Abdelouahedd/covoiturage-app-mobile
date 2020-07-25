@@ -1,5 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:dio/dio.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class FullPhoto extends StatelessWidget {
   final String url;
@@ -9,16 +14,21 @@ class FullPhoto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(
-          'FULL PHOTO',
-          style:
-              TextStyle(color: Color(0xff203152), fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
       body: new FullPhotoScreen(url: url),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _save(),
+        child: Icon(Icons.save_alt),
+      ),
     );
+  }
+
+  _save() async {
+    var response = await Dio()
+        .get(url, options: Options(responseType: ResponseType.bytes));
+    final result =
+        await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+    print(result);
+    Fluttertoast.showToast(msg: 'image saved $result');
   }
 }
 
