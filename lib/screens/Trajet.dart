@@ -195,7 +195,7 @@ class _TrajetState extends State<Trajet> {
                       children: [
                         Flexible(
                           child: RadioListTile<TypeClient>(
-                              autofocus: true,
+                              // autofocus: true,
                               activeColor: Colors.blueAccent,
                               title: Text("Passager"),
                               value: TypeClient.Passager,
